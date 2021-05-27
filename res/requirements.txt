@@ -1,0 +1,5 @@
+testresources
+pyautogui
+schedule
+psutil
+opencv-python
