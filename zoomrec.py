@@ -119,6 +119,8 @@ class HideViewOptionsThread:
                         time.sleep(1)
                         # Hide video panel
                         if pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'show_video_panel.png'), confidence=0.9) is not None:
+                            # Leave 'Show video panel' and move mouse from screen
+                            pyautogui.click(0, 0)
                             VIDEO_PANEL_HIDED = True
                         else:
                             try:
