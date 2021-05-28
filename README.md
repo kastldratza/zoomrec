@@ -37,6 +37,7 @@ CSV must be fromatted as in example/meetings.csv
   - Delimiter must be a semicolon "**;**"
   - Only meetings with flag "**record = true**" are joined and recorded
   - "**description**" is used for filename when recording
+  - "**duration**" in minutes (+5 minutes to the end)
 
 weekday | time | duration | id | password | description | record
 -------- | -------- | -------- | -------- | -------- | -------- | --------

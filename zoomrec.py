@@ -586,7 +586,7 @@ def join(meet_id, meet_pw, duration, description):
         ffmpeg.pid), signal.SIGQUIT)
 
     start_date = datetime.now()
-    end_date = start_date + timedelta(seconds=duration)
+    end_date = start_date + timedelta(seconds=duration + 300)  # Add 5 minutes
 
     # Start thread to check active screensharing
     HideViewOptionsThread()
@@ -653,7 +653,7 @@ def join_ongoing_meeting():
                 start_time = start_date.time()
 
                 end_date = start_date + \
-                    timedelta(seconds=int(row["duration"]) * 60)
+                    timedelta(seconds=int(row["duration"]) * 60 + 300)  # Add 5 minutes
                 end_time = end_date.time()
 
                 recent_duration = (end_date - curr_date).total_seconds()
