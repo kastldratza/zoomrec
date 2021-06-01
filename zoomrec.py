@@ -120,6 +120,7 @@ class HideViewOptionsThread:
                         # Hide video panel
                         if pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'show_video_panel.png'), confidence=0.9) is not None:
                             # Leave 'Show video panel' and move mouse from screen
+                            pyautogui.moveTo(0, 0)
                             pyautogui.click(0, 0)
                             VIDEO_PANEL_HIDED = True
                         else:
@@ -150,11 +151,11 @@ def check_connecting(zoom_pid, start_date, duration):
         logging.info("Connecting..")
 
     # Wait while connecting
-    # Exit if meeting is ended by time
+    # Exit when meeting ends after time
     while connecting:
         if (datetime.now() - start_date).total_seconds() > duration:
-            logging.info("Meeting ended by time..")
-            logging.info("Exit zoom..")
+            logging.info("Meeting ended after time!")
+            logging.info("Exit Zoom!")
             os.killpg(os.getpgid(zoom_pid), signal.SIGQUIT)
             return
 
@@ -250,7 +251,7 @@ def find_process_id_by_name(process_name):
     return list_of_process_objects
 
 
-def show_toolbar():
+def show_toolbars():
     # Mouse move to show toolbar
     width, height = pyautogui.size()
     y = (height / 2)
@@ -274,6 +275,7 @@ def join_audio(description):
 
     if not audio_joined:
         try:
+            show_toolbars()
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'join_audio.png'), confidence=0.9)
             pyautogui.click(x, y)
@@ -366,11 +368,11 @@ def join(meet_id, meet_pw, duration, description):
         logging.info("Please wait for the host to start this meeting.")
 
     # Wait for the host to start this meeting
-    # Exit if meeting is ended by time
+    # Exit when meeting ends after time
     while not meeting_started:
         if (datetime.now() - start_date).total_seconds() > duration:
-            logging.info("Meeting ended by time..")
-            logging.info("Exit zoom..")
+            logging.info("Meeting ended after time!")
+            logging.info("Exit Zoom!")
             os.killpg(os.getpgid(zoom.pid), signal.SIGQUIT)
             if DEBUG:
                 os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
@@ -402,11 +404,11 @@ def join(meet_id, meet_pw, duration, description):
         logging.info("Please wait, the meeting host will let you in soon..")
 
     # Wait while host will let you in
-    # Exit if meeting is ended by time
+    # Exit when meeting ends after time
     while in_waitingroom:
         if (datetime.now() - start_date).total_seconds() > duration:
-            logging.info("Meeting ended by time..")
-            logging.info("Exit zoom..")
+            logging.info("Meeting ended after time!")
+            logging.info("Exit Zoom!")
             os.killpg(os.getpgid(zoom.pid), signal.SIGQUIT)
             if DEBUG:
                 os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
@@ -418,7 +420,6 @@ def join(meet_id, meet_pw, duration, description):
             logging.info("Maybe no longer in the waiting room..")
             check_periods += 1
             if check_periods == 2:
-                in_waitingroom = False
                 logging.info("No longer in the waiting room..")
                 break
         time.sleep(2)
@@ -437,7 +438,7 @@ def join(meet_id, meet_pw, duration, description):
     join_audio(description)
     time.sleep(2)
     logging.info("Enter fullscreen..")
-    show_toolbar()
+    show_toolbars()
     try:
         x, y = pyautogui.locateCenterOnScreen(
             os.path.join(IMG_PATH, 'view.png'), confidence=0.9)
@@ -476,7 +477,7 @@ def join(meet_id, meet_pw, duration, description):
 
         # Switch to fullscreen
         time.sleep(2)
-        show_toolbar()
+        show_toolbars()
 
         logging.info("Enter fullscreen..")
         try:
@@ -521,7 +522,7 @@ def join(meet_id, meet_pw, duration, description):
                     TIME_FORMAT) + "-" + description) + "_error.png")
     else:
         # switch to speaker view
-        show_toolbar()
+        show_toolbars()
 
         logging.info("Switch view..")
         try:
