@@ -38,12 +38,12 @@ jobs:
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log in to Docker Hub
-          if: github.event_name != 'pull_request'
-          uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
-          with:
-            registry: ${{ env.REGISTRY_DOCKERHUB }}
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY_DOCKERHUB }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ${{ env.REGISTRY_GITHUB }}
         if: github.event_name != 'pull_request'
@@ -64,11 +64,11 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Push to Docker Hub
-          uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-          with:
-            context: .
-            push: ${{ github.event_name != 'pull_request' }}
-            tags: ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
