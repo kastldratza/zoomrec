@@ -20,6 +20,16 @@ The entire mechanism runs in a Docker container. So all you need to do is instal
 
 - Docker - [https://docs.docker.com/get-docker/]()
 
+### Docker Registry
+
+Docker images are build and pushed automatically to **Docker Hub** and **GitHub** Registry.
+
+So you can choose and use one of them:
+- ```ghcr.io/kastldratza/zoomrec:master```
+- ```kastldratza/zoomrec:latest```
+
+*For my examples in this README I used* ```kastldratza/zoomrec:latest```
+
 ---
 
 ## Usage

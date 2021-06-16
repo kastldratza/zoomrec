@@ -272,7 +272,7 @@ def join_audio(description):
         logging.error("Could not join with computer audio!")
         if DEBUG:
             pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                TIME_FORMAT) + "-" + description) + "_error.png")
+                TIME_FORMAT) + "-" + description) + "_join_with_computer_audio_error.png")
 
     if not audio_joined:
         try:
@@ -285,7 +285,8 @@ def join_audio(description):
             logging.error("Could not join audio!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+
+                    TIME_FORMAT) + "-" + description) + "_join_audio_error.png")
             return False
 
 
@@ -304,7 +305,7 @@ def join(meet_id, meet_pw, duration, description):
         logging.info("Start recording..")
 
         filename = os.path.join(
-            REC_PATH, time.strftime(TIME_FORMAT)) + "-JOIN-" + description + ".mkv"
+            REC_PATH, time.strftime(TIME_FORMAT)) + "-" + description + "-JOIN.mkv"
 
         command = "ffmpeg -nostats -loglevel quiet -f pulse -ac 2 -i 1 -f x11grab -r 30 -s " + resolution + " -i " + \
                   disp + " -acodec pcm_s16le -vcodec libx264rgb -preset ultrafast -crf 0 -threads 0 -async 1 -vsync 1 " + filename
@@ -457,7 +458,7 @@ def join(meet_id, meet_pw, duration, description):
         logging.error("Could not find view!")
         if DEBUG:
             pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                TIME_FORMAT) + "-" + description) + "_error.png")
+                TIME_FORMAT) + "-" + description) + "_view_error.png")
 
     time.sleep(2)
 
@@ -471,7 +472,7 @@ def join(meet_id, meet_pw, duration, description):
         logging.error("Could not find fullscreen!")
         if DEBUG:
             pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                TIME_FORMAT) + "-" + description) + "_error.png")
+                TIME_FORMAT) + "-" + description) + "_fullscreen_error.png")
 
     # Screensharing already active
     if not fullscreen:
@@ -483,7 +484,7 @@ def join(meet_id, meet_pw, duration, description):
             logging.error("Could not find view options!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_view_options_error.png")
 
         # Switch to fullscreen
         time.sleep(2)
@@ -498,7 +499,7 @@ def join(meet_id, meet_pw, duration, description):
             logging.error("Could not enter fullscreen by image!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_enter_fullscreen_error.png")
             return
 
         time.sleep(2)
@@ -514,7 +515,7 @@ def join(meet_id, meet_pw, duration, description):
         logging.error("Could not find view options!")
         if DEBUG:
             pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                TIME_FORMAT) + "-" + description) + "_error.png")
+                TIME_FORMAT) + "-" + description) + "_view_options_error.png")
 
     time.sleep(2)
 
@@ -529,7 +530,7 @@ def join(meet_id, meet_pw, duration, description):
             logging.error("Could not hide video panel!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_hide_video_panel_error.png")
     else:
         # switch to speaker view
         show_toolbars()
@@ -543,7 +544,7 @@ def join(meet_id, meet_pw, duration, description):
             logging.error("Could not find view!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_view_error.png")
 
         time.sleep(2)
 
@@ -556,7 +557,7 @@ def join(meet_id, meet_pw, duration, description):
             logging.error("Could not switch speaker view!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_speaker_view_error.png")
 
         try:
             # minimize panel
@@ -567,7 +568,7 @@ def join(meet_id, meet_pw, duration, description):
             logging.error("Could not minimize panel!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_minimize_error.png")
 
     # Move mouse from screen
     pyautogui.moveTo(0, 0)
@@ -632,7 +633,7 @@ def join(meet_id, meet_pw, duration, description):
         except TypeError:
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
-                    TIME_FORMAT) + "-" + description) + "_error.png")
+                    TIME_FORMAT) + "-" + description) + "_ok_error.png")
 
 
 def exit_process_by_name(name):
