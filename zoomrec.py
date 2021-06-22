@@ -267,6 +267,7 @@ def join_audio(description):
         logging.info("Join with computer audio..")
         pyautogui.click(x, y)
         audio_joined = True
+        return True
     except TypeError:
         logging.error("Could not join with computer audio!")
         if DEBUG:
@@ -284,7 +285,9 @@ def join_audio(description):
             logging.error("Could not join audio!")
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
+
                     TIME_FORMAT) + "-" + description) + "_join_audio_error.png")
+            return False
 
 
 def join(meet_id, meet_pw, duration, description):
@@ -435,7 +438,15 @@ def join(meet_id, meet_pw, duration, description):
 
     # Set computer audio
     time.sleep(2)
-    join_audio(description)
+    if not join_audio(description):
+        logging.info("Exit!")
+        os.killpg(os.getpgid(zoom.pid), signal.SIGQUIT)
+        if DEBUG:
+            os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
+            atexit.unregister(os.killpg)
+        time.sleep(2)
+        join(meet_id, meet_pw, duration, description)
+
     time.sleep(2)
     logging.info("Enter fullscreen..")
     show_toolbars()
@@ -561,6 +572,7 @@ def join(meet_id, meet_pw, duration, description):
 
     # Move mouse from screen
     pyautogui.moveTo(0, 0)
+    pyautogui.click(0, 0)
 
     if DEBUG and ffmpeg_debug is not None:
         os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
