@@ -1,6 +1,23 @@
-# zoomrec
 
-_zoomrec_ is an all-in-one solution to automatically join and record Zoom meetings.
+<h1 align="center">
+    zoomrec	
+</h1>
+
+<h4 align="center">
+	A all-in-one solution to automatically join and record Zoom meetings.
+</h4>
+
+
+<p align="center">
+  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/kastldratza/zoomrec">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues/kastldratza/zoomrec">
+	<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/CodeQL?label=CodeQL">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/Publish%20Docker%20image?label=Docker">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/Snyk?label=Snyk">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/Snyk%20Container?label=Snyk%20Container">
+</p>
+
+---
 
 - **Python3** - _Script to automatically join Zoom meetings and control FFmpeg_
 - **FFmpeg** - _Triggered by python script to start/stop screen recording_
