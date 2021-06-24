@@ -31,7 +31,7 @@
 
 ## Installation
 
-The entire mechanism runs in a Docker container. So all you need to do is install Docker and use the image from Docker Hub.
+The entire mechanism runs in a Docker container. So all you need to do is install Docker and use the image from Registry.
 
 ### Requirements
 
@@ -39,7 +39,7 @@ The entire mechanism runs in a Docker container. So all you need to do is instal
 
 ### Docker Registry
 
-Docker images are build and pushed automatically to **Docker Hub** and **GitHub** Registry.
+Docker images are build and pushed automatically to **Docker Hub** and **GitHub Container Registry**.
 
 So you can choose and use one of them:
 - ```ghcr.io/kastldratza/zoomrec:master```
@@ -195,7 +195,6 @@ Create unittests for different use cases:
 - [ ] ...
 
 ### Tested with
-- [x] Zoom 5.6.4
 - [x] Ubuntu 20.04
   - [x] Desktop
   - [x] Server
