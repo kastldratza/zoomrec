@@ -180,7 +180,7 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [x] Continuously check: _Hide Video Panel_
 - [x] Continuously check: _This meeting has been ended by host_
 - [x] Quit ffmpeg gracefully on abort
-- [ ] _Host is sharing poll results_
+- [x] _Host is sharing poll results_
 - [ ] _This meeting is for authorized attendees only_
   - [x] Leave meeting
   - [ ] _Sign In to Join_

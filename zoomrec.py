@@ -89,7 +89,7 @@ class BackgroundThread:
             # Check if ended
             if (pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'meeting_ended_by_host_1.png'),
                                          confidence=0.9) is not None or pyautogui.locateOnScreen(
-                    os.path.join(IMG_PATH, 'meeting_ended_by_host_2.png'), confidence=0.9) is not None):
+                os.path.join(IMG_PATH, 'meeting_ended_by_host_2.png'), confidence=0.9) is not None):
                 ONGOING_MEETING = False
                 logging.info("Meeting ended by host..")
             time.sleep(self.interval)
@@ -109,6 +109,32 @@ class HideViewOptionsThread:
         global VIDEO_PANEL_HIDED
         logging.debug("Check continuously if screensharing is active..")
         while ONGOING_MEETING:
+            # Check if host is sharing poll results
+            if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'host_is_sharing_poll_results.png'),
+                                               confidence=0.9,
+                                               minSearchTime=2) is not None):
+                logging.info("Host is sharing poll results..")
+                try:
+                    x, y = pyautogui.locateCenterOnScreen(os.path.join(
+                        IMG_PATH, 'host_is_sharing_poll_results.png'), confidence=0.9)
+                    pyautogui.click(x, y)
+                    try:
+                        x, y = pyautogui.locateCenterOnScreen(os.path.join(
+                            IMG_PATH, 'exit.png'), confidence=0.9)
+                        pyautogui.click(x, y)
+                        logging.info("Closed poll results window..")
+                    except TypeError:
+                        logging.error("Could not exit poll results window!")
+                        if DEBUG:
+                            pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
+                                TIME_FORMAT) + "-" + description) + "_close_poll_results_error.png")
+                except TypeError:
+                    logging.error("Could not find poll results window anymore!")
+                    if DEBUG:
+                        pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
+                            TIME_FORMAT) + "-" + description) + "_find_poll_results_error.png")
+
+            # Check if view options available
             if pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'view_options.png'), confidence=0.9) is not None:
                 if not VIDEO_PANEL_HIDED:
                     logging.info("Screensharing active..")
@@ -118,7 +144,8 @@ class HideViewOptionsThread:
                         pyautogui.click(x, y)
                         time.sleep(1)
                         # Hide video panel
-                        if pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'show_video_panel.png'), confidence=0.9) is not None:
+                        if pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'show_video_panel.png'),
+                                                    confidence=0.9) is not None:
                             # Leave 'Show video panel' and move mouse from screen
                             pyautogui.moveTo(0, 0)
                             pyautogui.click(0, 0)
@@ -273,7 +300,7 @@ def join_audio(description):
         if DEBUG:
             pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
                 TIME_FORMAT) + "-" + description) + "_join_with_computer_audio_error.png")
-
+    time.sleep(1)
     if not audio_joined:
         try:
             show_toolbars()
@@ -402,7 +429,8 @@ def join(meet_id, meet_pw, duration, description):
     time.sleep(2)
 
     # Check if joined into waiting room
-    if pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'waiting_room.png'), confidence=0.9, minSearchTime=3) is not None:
+    if pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'waiting_room.png'), confidence=0.9,
+                                      minSearchTime=3) is not None:
         in_waitingroom = True
         logging.info("Please wait, the meeting host will let you in soon..")
 
@@ -433,7 +461,43 @@ def join(meet_id, meet_pw, duration, description):
 
     logging.info("Joined meeting..")
 
-    # Start meeting end thread to check if ended by host
+    # Check if recording warning is shown at the beginning
+    if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'warn_meeting_recording.png'), confidence=0.9,
+                                       minSearchTime=2) is not None):
+        logging.info("This meeting is being recorded..")
+        try:
+            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+                IMG_PATH, 'accept_recording.png'), confidence=0.9)
+            pyautogui.click(x, y)
+            logging.info("Accepted recording..")
+        except TypeError:
+            logging.error("Could not accept recording!")
+
+    # Check if host is sharing poll results at the beginning
+    if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'host_is_sharing_poll_results.png'), confidence=0.9,
+                                       minSearchTime=2) is not None):
+        logging.info("Host is sharing poll results..")
+        try:
+            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+                IMG_PATH, 'host_is_sharing_poll_results.png'), confidence=0.9)
+            pyautogui.click(x, y)
+            try:
+                x, y = pyautogui.locateCenterOnScreen(os.path.join(
+                    IMG_PATH, 'exit.png'), confidence=0.9)
+                pyautogui.click(x, y)
+                logging.info("Closed poll results window..")
+            except TypeError:
+                logging.error("Could not exit poll results window!")
+                if DEBUG:
+                    pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
+                        TIME_FORMAT) + "-" + description) + "_close_poll_results_error.png")
+        except TypeError:
+            logging.error("Could not find poll results window anymore!")
+            if DEBUG:
+                pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
+                    TIME_FORMAT) + "-" + description) + "_find_poll_results_error.png")
+
+    # Start BackgroundThread
     BackgroundThread()
 
     # Set computer audio
@@ -473,6 +537,8 @@ def join(meet_id, meet_pw, duration, description):
         if DEBUG:
             pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
                 TIME_FORMAT) + "-" + description) + "_fullscreen_error.png")
+
+    # TODO: Check for 'Exit Full Screen': already fullscreen -> fullscreen = True
 
     # Screensharing already active
     if not fullscreen:
