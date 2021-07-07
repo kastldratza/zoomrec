@@ -198,6 +198,7 @@ Create unittests for different use cases:
 - [x] Ubuntu 20.04
   - [x] Desktop
   - [x] Server
+- [x] macOS 
 - [ ] Windows 10
 
 ## Contributing
