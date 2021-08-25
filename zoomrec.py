@@ -231,6 +231,7 @@ def join_meeting(meet_id):
     pyautogui.press('tab')
     pyautogui.press('space')
     pyautogui.press('tab')
+    pyautogui.press('tab')
     pyautogui.press('space')
 
     time.sleep(2)
