@@ -31,6 +31,9 @@ echo -e "\nConnect to $VNC_IP:$VNC_PORT"
 # Start xfce4
 "$HOME"/xfce.sh &> "$START_DIR"/xfce.log
 
+# Cleanup to ensure pulseaudio is stateless
+rm -rf /var/run/pulse /var/lib/pulse /home/zoomrec/.config/pulse
+
 # Start audio
 pulseaudio -D --exit-idle-time=-1 --log-level=error
 
