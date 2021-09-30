@@ -7,15 +7,15 @@
 	A all-in-one solution to automatically join and record Zoom meetings.
 </h4>
 
-
 <p align="center">
   <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/kastldratza/zoomrec">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/kastldratza/zoomrec">
-	<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/CodeQL?label=CodeQL">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/Publish%20Docker%20image?label=Docker">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/Snyk?label=Snyk">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kastldratza/zoomrec/Snyk%20Container?label=Snyk%20Container">
+	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml/badge.svg" alt="GitHub Workflow Status"></a>
+	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/docker-publish.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/docker-publish.yml/badge.svg" alt="GitHub Workflow Status"></a>
+	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/snyk.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/snyk.yml/badge.svg" alt="GitHub Workflow Status"></a>
+	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/snyk-container-analysis.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/snyk-container-analysis.yml/badge.svg" alt="GitHub Workflow Status"></a>
 </p>
+
 
 ---
 
