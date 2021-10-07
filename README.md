@@ -39,7 +39,7 @@ The entire mechanism runs in a Docker container. So all you need to do is instal
 
 ### Docker Registry
 
-Docker images are build and pushed automatically to **Docker Hub** and **GitHub Container Registry**.
+Docker images are build and pushed automatically to [**Docker Hub**](https://hub.docker.com/repository/docker/kastldratza/zoomrec) and [**GitHub Container Registry**](https://github.com/kastldratza/zoomrec/pkgs/container/zoomrec).
 
 So you can choose and use one of them:
 - ```ghcr.io/kastldratza/zoomrec:master```
@@ -192,6 +192,9 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [ ] _Join a Meeting_ from csv with url
 - [ ] _Sign In_ to existing Zoom account
 - [ ] _Join Breakout Room_
+- [ ] Join a meeting and start recording automatically by looking up a calendar
+- [ ] Support to record Google Meet, MS Teams, Cisco WebEx calls too
+- [ ] Ability to monitor recordings sessions in various containers
 
 ---
 
