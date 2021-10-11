@@ -2,7 +2,7 @@
 set -e
 
 # Disable screensaver and power management
-xset -dpms
+xset -dpms &
 xset s noblank &
 xset s 0 0 &
 xset s off &

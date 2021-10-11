@@ -50,17 +50,22 @@ So you can choose and use one of them:
 ---
 
 ## Usage
-
-- Container saves recordings inside container at **/home/zoomrec/recordings**
-- The current directory is used to mount recordings-Folder, but can be changed if needed
-  - Please check use of paths on different operating systems
-  - Please check permissions for used directory
+- Container saves recordings at **/home/zoomrec/recordings**
+- The current directory is used to mount **recordings**-Folder, but can be changed if needed
+  - Please check use of paths on different operating systems!
+  - Please check permissions for used directory!
 - Container stops when Python script is terminated
 - Zoomrec uses a CSV file with entries of Zoom meetings to record them
   - The csv can be passed as seen below (mount as volume or add to docker image)
+- To "say" something after joining a meeting:
+  - ***paplay*** (*pulseaudio-utils*) is used to play a sound to a specified microphone output, which is mapped to a microphone input at startup.
+  - ***paplay*** is triggered and plays a random file from **/home/zoomrec/audio**
+  - Nothing will be played if directory:
+    - does not contain **.wav** files
+    - is not mounted properly
 
 ### CSV structure
-CSV must be fromatted as in example/meetings.csv
+CSV must be formatted as in example/meetings.csv
   - Delimiter must be a semicolon "**;**"
   - Only meetings with flag "**record = true**" are joined and recorded
   - "**description**" is used for filename when recording
@@ -73,6 +78,7 @@ monday | 14:00 | 90 | 222222222222 | 321523 | Unimportant_Meeting | false
 
 ### VNC
 You can connect to zoomrec via vnc and see what is happening.
+
 #### Connect (default)
 Hostname | Port | Password
 -------- | -------- | --------
@@ -82,10 +88,13 @@ localhost   | 5901   | zoomrec
 To have access to the recordings, a volume is mounted, so you need to create a folder that container users can access.
 
 **[ IMPORTANT ]**
-#### Create folder for recordings and set permissions (on Host)
+#### Create folders and set permissions (on Host)
 ```
 mkdir -p recordings
 chown -R 1000:1000 recordings
+
+mkdir -p audio
+chown -R 1000:1000 audio
 ```
 
 ### Flags
@@ -94,11 +103,12 @@ chown -R 1000:1000 recordings
 docker run -d --restart unless-stopped \
   -e TZ=Europe/Berlin \
   -v $(pwd)/recordings:/home/zoomrec/recordings \
+  -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
 ```
-#### Set debugging flag
+#### Set debugging flag (default: False)
    - screenshot on error
    - record joining
    - do not exit container on error
@@ -106,17 +116,18 @@ kastldratza/zoomrec:latest
 docker run -d --restart unless-stopped \
   -e DEBUG=True \
   -v $(pwd)/recordings:/home/zoomrec/recordings \
+  -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
 ```
-
 
 ### Windows / _cmd_
 
 ```cmd
 docker run -d --restart unless-stopped \
   -v %cd%\recordings:/home/zoomrec/recordings \
+  -v %cd%\example\audio:/home/zoomrec/audio \
   -v %cd%\example\meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
@@ -127,6 +138,7 @@ kastldratza/zoomrec:latest
 ```powershell
 docker run -d --restart unless-stopped \
   -v ${PWD}/recordings:/home/zoomrec/recordings \
+  -v ${PWD}/example/audio:/home/zoomrec/audio \
   -v ${PWD}/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
@@ -137,6 +149,7 @@ kastldratza/zoomrec:latest
 ```bash
 docker run -d --restart unless-stopped \
   -v $(pwd)/recordings:/home/zoomrec/recordings \
+  -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
@@ -153,7 +166,7 @@ cd example
 # Build new image by customized Dockerfile
 docker build -t kastldratza/zoomrec-custom:latest .
 
-# Run image without mounting meetings.csv
+# Run image without mounting meetings.csv and audio directory
 # Linux
 docker run -d --restart unless-stopped -v $(pwd)/recordings:/home/zoomrec/recordings -p 5901:5901 kastldratza/zoomrec-custom:latest
 
@@ -181,12 +194,12 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [x] Quit ffmpeg gracefully on abort
 - [x] _Host is sharing poll results_
 - [x] _This meeting is for authorized attendees only_ / **Leave meeting**
+- [x] Play sound after joining a meeting
 
 ---
 
 ## Roadmap
 - [ ] Refactoring
-- [ ] Play sound after joining a meeting
 - [ ] Create terraform stack to deploy in AWS
 - [ ] _Join a Meeting_ from calendar
 - [ ] _Join a Meeting_ from csv with url
