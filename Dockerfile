@@ -112,13 +112,12 @@ RUN adduser zoomrec pulse-access
 
 USER zoomrec
 
-# Add xfce resources
-ADD res/xfce/ ${HOME}/
-ADD res/zoom.desktop ${HOME}/Desktop/
-ADD res/vlc.desktop ${HOME}/Desktop/
+# Add home resources
+ADD res/home/ ${HOME}/
 
 # Add startup
 ADD res/entrypoint.sh ${START_DIR}/entrypoint.sh
+ADD res/xfce.sh ${START_DIR}/xfce.sh
 
 # Add python script with resources
 ADD zoomrec.py ${HOME}/

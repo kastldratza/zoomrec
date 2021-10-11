@@ -32,6 +32,7 @@ BASE_PATH = os.getenv('HOME')
 CSV_PATH = os.path.join(BASE_PATH, "meetings.csv")
 IMG_PATH = os.path.join(BASE_PATH, "img")
 REC_PATH = os.path.join(BASE_PATH, "recordings")
+AUDIO_PATH = os.path.join(BASE_PATH, "audio")
 DEBUG_PATH = os.path.join(REC_PATH, "screenshots")
 
 NAME_LIST = [
@@ -318,6 +319,34 @@ def join_audio(description):
             return False
 
 
+def unmute(description):
+    try:
+        show_toolbars()
+        x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            IMG_PATH, 'unmute.png'), confidence=0.9)
+        pyautogui.click(x, y)
+        return True
+    except TypeError:
+        logging.error("Could not unmute!")
+        if DEBUG:
+            pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(TIME_FORMAT) + "-" + description) + "_unmute_error.png")
+        return False
+
+
+def mute(description):
+    try:
+        show_toolbars()
+        x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            IMG_PATH, 'mute.png'), confidence=0.9)
+        pyautogui.click(x, y)
+        return True
+    except TypeError:
+        logging.error("Could not mute!")
+        if DEBUG:
+            pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(TIME_FORMAT) + "-" + description) + "_mute_error.png")
+        return False
+
+
 def join(meet_id, meet_pw, duration, description):
     global VIDEO_PANEL_HIDED
     ffmpeg_debug = None
@@ -512,6 +541,10 @@ def join(meet_id, meet_pw, duration, description):
         time.sleep(2)
         join(meet_id, meet_pw, duration, description)
 
+    # 'Say' something if path available (mounted)
+    if os.path.exists(AUDIO_PATH):
+        play_audio(description)
+
     time.sleep(2)
     logging.info("Enter fullscreen..")
     show_toolbars()
@@ -702,6 +735,29 @@ def join(meet_id, meet_pw, duration, description):
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
                     TIME_FORMAT) + "-" + description) + "_ok_error.png")
 
+def play_audio(description):
+    # Get all files in audio directory
+    files=os.listdir(AUDIO_PATH)
+    # Filter .wav files
+    files=list(filter(lambda f: f.endswith(".wav"), files))
+    # Check if .wav files available
+    if len(files) > 0:
+        unmute(description)
+        # Get random file
+        file=random.choice(files)
+        path = os.path.join(AUDIO_PATH, file)
+        # Use paplay to play .wav file on specific Output
+        command = "/usr/bin/paplay --device=microphone -p " + path
+        play = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res, err = play.communicate()
+        if play.returncode != 0:
+            logging.error("Failed playing file! - " + str(play.returncode) + " - " + str(err))
+        else:
+            logging.debug("Successfully played audio file! - " + str(play.returncode))
+        mute(description)
+    else:
+        logging.error("No .wav files found!")
+
 
 def exit_process_by_name(name):
     list_of_process_ids = find_process_id_by_name(name)
@@ -739,15 +795,13 @@ def join_ongoing_meeting():
                 recent_duration = (end_date - curr_date).total_seconds()
 
                 if start_time < end_time:
-                    if start_time <= curr_time <= end_time:
-                        if str(row["record"]) == 'true':
+                    if start_time <= curr_time <= end_time and str(row["record"]) == 'true':
                             logging.info(
                                 "Join meeting that is currently running..")
                             join(meet_id=row["id"], meet_pw=row["password"],
                                  duration=recent_duration, description=row["description"])
                 else:  # crosses midnight
-                    if curr_time >= start_time or curr_time <= end_time:
-                        if str(row["record"]) == 'true':
+                    if curr_time >= start_time or curr_time <= end_time and str(row["record"]) == 'true':
                             logging.info(
                                 "Join meeting that is currently running..")
                             join(meet_id=row["id"], meet_pw=row["password"],
