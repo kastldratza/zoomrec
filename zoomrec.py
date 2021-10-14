@@ -197,8 +197,8 @@ def check_connecting(zoom_pid, start_date, duration):
         time.sleep(2)
 
 
-def join_meeting(meet_id):
-    logging.info("Join a meeting..")
+def join_meeting_id(meet_id):
+    logging.info("Join a meeting by ID..")
     found_join_meeting = False
     try:
         x, y = pyautogui.locateCenterOnScreen(os.path.join(
@@ -236,6 +236,31 @@ def join_meeting(meet_id):
     pyautogui.press('space')
 
     time.sleep(2)
+
+    return check_error()
+
+
+def join_meeting_url():
+    logging.info("Join a meeting by URL..")
+
+    # Insert name
+    pyautogui.hotkey('ctrl', 'a')
+    pyautogui.write(random.choice(NAME_LIST), interval=0.1)
+
+    # Configure
+    pyautogui.press('tab')
+    pyautogui.press('space')
+    pyautogui.press('tab')
+    pyautogui.press('space')
+    pyautogui.press('tab')
+    pyautogui.press('space')
+
+    time.sleep(2)
+
+    return check_error()
+    
+
+def check_error():
     # Sometimes invalid id error is displayed
     if pyautogui.locateCenterOnScreen(os.path.join(
             IMG_PATH, 'invalid_meeting_id.png'), confidence=0.9) is not None:
@@ -375,10 +400,17 @@ def join(meet_id, meet_pw, duration, description):
     # Exit Zoom if running
     exit_process_by_name("zoom")
 
-    # Start Zoom
-    zoom = subprocess.Popen("zoom", stdout=subprocess.PIPE,
-                            shell=True, preexec_fn=os.setsid)
+    join_by_url = meet_id.startswith('https://') or meet_id.startswith('http://')
 
+    if not join_by_url:
+        # Start Zoom
+        zoom = subprocess.Popen("zoom", stdout=subprocess.PIPE,
+                                shell=True, preexec_fn=os.setsid)
+    else:
+        logging.info("Starting zoom with url")
+        zoom = subprocess.Popen(f'zoom --url="{meet_id}"', stdout=subprocess.PIPE,
+                                shell=True, preexec_fn=os.setsid)
+    
     # Wait while zoom process is there
     list_of_process_ids = find_process_id_by_name('zoom')
     while len(list_of_process_ids) <= 0:
@@ -386,15 +418,21 @@ def join(meet_id, meet_pw, duration, description):
         list_of_process_ids = find_process_id_by_name('zoom')
         time.sleep(1)
 
-    # Wait for zoom is started
-    while pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'join_meeting.png'), confidence=0.9) is None:
-        logging.info("Zoom not ready yet!")
-        time.sleep(1)
+    if not join_by_url:
+        # Wait for zoom is started
+        while pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'join_meeting.png'), confidence=0.9) is None:
+            logging.info("Zoom not ready yet!")
+            time.sleep(1)
 
-    logging.info("Zoom started!")
-    start_date = datetime.now()
+        logging.info("Zoom started!")
+        start_date = datetime.now()
+        joined = join_meeting_id(meet_id)
+    else:
+        logging.info("Zoom started!")
+        time.sleep(3)
+        start_date = datetime.now()
+        joined = join_meeting_url()
 
-    joined = join_meeting(meet_id)
     if not joined:
         logging.error("Failed to join meeting!")
         os.killpg(os.getpgid(zoom.pid), signal.SIGQUIT)
@@ -403,13 +441,14 @@ def join(meet_id, meet_pw, duration, description):
             os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
             atexit.unregister(os.killpg)
         return
-
+    
     # Check if connecting
     check_connecting(zoom.pid, start_date, duration)
 
-    pyautogui.write(meet_pw, interval=0.2)
-    pyautogui.press('tab')
-    pyautogui.press('space')
+    if not join_by_url:
+        pyautogui.write(meet_pw, interval=0.2)
+        pyautogui.press('tab')
+        pyautogui.press('space')
 
     # Joined meeting
     # Check if connecting

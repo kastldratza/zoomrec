@@ -195,6 +195,7 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [x] _Host is sharing poll results_
 - [x] _This meeting is for authorized attendees only_ / **Leave meeting**
 - [x] Play sound after joining a meeting
+- [x] _Join a Meeting_ from csv with url
 
 ---
 
@@ -202,7 +203,6 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [ ] Refactoring
 - [ ] Create terraform stack to deploy in AWS
 - [ ] _Join a Meeting_ from calendar
-- [ ] _Join a Meeting_ from csv with url
 - [ ] _Sign In_ to existing Zoom account
 - [ ] _Join Breakout Room_
 - [ ] Join a meeting and start recording automatically by looking up a calendar
