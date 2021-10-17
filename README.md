@@ -75,6 +75,7 @@ weekday | time | duration | id | password | description | record
 -------- | -------- | -------- | -------- | -------- | -------- | --------
 monday | 09:55 | 60 | 111111111111 | 741699 | Important_Meeting | true
 monday | 14:00 | 90 | 222222222222 | 321523 | Unimportant_Meeting | false
+tuesday| 17:00 | 90 | https://zoom.us/j/123456789?pwd=abc || Meeting_with_URL | true
 
 ### VNC
 You can connect to zoomrec via vnc and see what is happening.
@@ -195,6 +196,7 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [x] _Host is sharing poll results_
 - [x] _This meeting is for authorized attendees only_ / **Leave meeting**
 - [x] Play sound after joining a meeting
+- [x] _Join a Meeting_ from csv with url
 
 ---
 
@@ -202,7 +204,6 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [ ] Refactoring
 - [ ] Create terraform stack to deploy in AWS
 - [ ] _Join a Meeting_ from calendar
-- [ ] _Join a Meeting_ from csv with url
 - [ ] _Sign In_ to existing Zoom account
 - [ ] _Join Breakout Room_
 - [ ] Join a meeting and start recording automatically by looking up a calendar
