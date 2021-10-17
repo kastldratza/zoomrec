@@ -406,10 +406,12 @@ def join(meet_id, meet_pw, duration, description):
         # Start Zoom
         zoom = subprocess.Popen("zoom", stdout=subprocess.PIPE,
                                 shell=True, preexec_fn=os.setsid)
+        img_name = 'join_meeting.png'
     else:
         logging.info("Starting zoom with url")
         zoom = subprocess.Popen(f'zoom --url="{meet_id}"', stdout=subprocess.PIPE,
                                 shell=True, preexec_fn=os.setsid)
+        img_name = 'join.png'
     
     # Wait while zoom process is there
     list_of_process_ids = find_process_id_by_name('zoom')
@@ -418,19 +420,17 @@ def join(meet_id, meet_pw, duration, description):
         list_of_process_ids = find_process_id_by_name('zoom')
         time.sleep(1)
 
-    if not join_by_url:
-        # Wait for zoom is started
-        while pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'join_meeting.png'), confidence=0.9) is None:
-            logging.info("Zoom not ready yet!")
-            time.sleep(1)
+    # Wait for zoom is started
+    while pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, img_name), confidence=0.9) is None:
+        logging.info("Zoom not ready yet!")
+        time.sleep(1)
 
-        logging.info("Zoom started!")
-        start_date = datetime.now()
+    logging.info("Zoom started!")
+    start_date = datetime.now()
+
+    if not join_by_url:
         joined = join_meeting_id(meet_id)
     else:
-        logging.info("Zoom started!")
-        time.sleep(3)
-        start_date = datetime.now()
         joined = join_meeting_url()
 
     if not joined:
@@ -441,7 +441,7 @@ def join(meet_id, meet_pw, duration, description):
             os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
             atexit.unregister(os.killpg)
         return
-    
+
     # Check if connecting
     check_connecting(zoom.pid, start_date, duration)
 
