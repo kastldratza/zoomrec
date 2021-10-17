@@ -431,6 +431,7 @@ def join(meet_id, meet_pw, duration, description):
     if not join_by_url:
         joined = join_meeting_id(meet_id)
     else:
+        time.sleep(2)
         joined = join_meeting_url()
 
     if not joined:
