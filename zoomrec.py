@@ -44,7 +44,7 @@ TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM_RETRIES = 5
 
 DISPLAY_NAME = os.getenv('DISPLAY_NAME')
-if len(DISPLAY_NAME) < 3:
+if DISPLAY_NAME is not None and len(DISPLAY_NAME) < 3:
     NAME_LIST = [
         'iPhone',
         'iPad',
