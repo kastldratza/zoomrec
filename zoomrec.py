@@ -788,7 +788,6 @@ def join(meet_id, meet_pw, duration, description):
     HideViewOptionsThread()
     
     # Send Telegram Notification
-    
     send_telegram_message("Joined Meeting '{}' and started recording.".format(description))
     
     meeting_running = True
