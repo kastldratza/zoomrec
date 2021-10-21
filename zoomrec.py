@@ -184,6 +184,14 @@ def send_telegram_message(text):
     global TELEGRAM_CHAT_ID
     global TELEGRAM_RETRIES
 	
+    if TELEGRAM_TOKEN is None:
+        logging.error("Telegram token is missing. No Telegram messages will be send!")
+         return
+    
+    if TELEGRAM_CHAT_ID is None:
+        logging.error("Telegram chat_id is missing. No Telegram messages will be send!")
+         return
+        
     if len(TELEGRAM_TOKEN) < 3 or len(TELEGRAM_CHAT_ID) < 3:
         logging.error("Telegram token or chat_id missing. No Telegram messages will be send!")
         return
