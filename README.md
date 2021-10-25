@@ -91,7 +91,7 @@ To have access to the recordings, a volume is mounted, so you need to create a f
 **[ IMPORTANT ]**
 #### Create folders and set permissions (on Host)
 ```
-mkdir -p recordings
+mkdir -p recordings/screenshots
 chown -R 1000:1000 recordings
 
 mkdir -p audio
