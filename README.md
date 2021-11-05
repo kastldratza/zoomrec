@@ -1,21 +1,21 @@
-
-<h1 align="center">
+<h1 style="text-align:center">
     zoomrec	
 </h1>
 
-<h4 align="center">
+<h4 style="text-align:center">
 	A all-in-one solution to automatically join and record Zoom meetings.
 </h4>
 
-<p align="center">
-  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/kastldratza/zoomrec">
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues/kastldratza/zoomrec">
-	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml/badge.svg" alt="GitHub Workflow Status"></a>
+<p style="text-align:center">
 	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/docker-publish.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/docker-publish.yml/badge.svg" alt="GitHub Workflow Status"></a>
+	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml/badge.svg" alt="GitHub Workflow Status"></a>
 	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/snyk.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/snyk.yml/badge.svg" alt="GitHub Workflow Status"></a>
 	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/snyk-container-analysis.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/snyk-container-analysis.yml/badge.svg" alt="GitHub Workflow Status"></a>
+    <br>
+    <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/kastldratza/zoomrec">
+    <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/kastldratza/zoomrec/latest">
+    <img alt="Github Stars" src="https://img.shields.io/github/stars/kastldratza/zoomrec.svg">
 </p>
-
 
 ---
 
@@ -25,13 +25,16 @@
 
 ---
 
-![Join a test meeting](doc/demo/join-meeting.gif)
+Join with ID and Passcode           |  Join with URL
+:-------------------------:|:-------------------------:
+![](doc/demo/join-meeting-id.gif)  |  ![](doc/demo/join-meeting-url.gif)
 
 ---
 
 ## Installation
 
-The entire mechanism runs in a Docker container. So all you need to do is install Docker and use the image from Registry.
+The entire mechanism runs in a Docker container. So all you need to do is install Docker and use the image from
+Registry.
 
 ### Requirements
 
@@ -39,9 +42,12 @@ The entire mechanism runs in a Docker container. So all you need to do is instal
 
 ### Docker Registry
 
-Docker images are build and pushed automatically to [**Docker Hub**](https://hub.docker.com/repository/docker/kastldratza/zoomrec) and [**GitHub Container Registry**](https://github.com/kastldratza/zoomrec/pkgs/container/zoomrec).
+Docker images are build and pushed automatically to [**Docker
+Hub**](https://hub.docker.com/repository/docker/kastldratza/zoomrec) and [**GitHub Container
+Registry**](https://github.com/kastldratza/zoomrec/pkgs/container/zoomrec).
 
 So you can choose and use one of them:
+
 - ```ghcr.io/kastldratza/zoomrec:master```
 - ```kastldratza/zoomrec:latest```
 
@@ -50,26 +56,30 @@ So you can choose and use one of them:
 ---
 
 ## Usage
+
 - Container saves recordings at **/home/zoomrec/recordings**
 - The current directory is used to mount **recordings**-Folder, but can be changed if needed
-  - Please check use of paths on different operating systems!
-  - Please check permissions for used directory!
+    - Please check use of paths on different operating systems!
+    - Please check permissions for used directory!
 - Container stops when Python script is terminated
 - Zoomrec uses a CSV file with entries of Zoom meetings to record them
-  - The csv can be passed as seen below (mount as volume or add to docker image)
+    - The csv can be passed as seen below (mount as volume or add to docker image)
 - To "say" something after joining a meeting:
-  - ***paplay*** (*pulseaudio-utils*) is used to play a sound to a specified microphone output, which is mapped to a microphone input at startup.
-  - ***paplay*** is triggered and plays a random file from **/home/zoomrec/audio**
-  - Nothing will be played if directory:
-    - does not contain **.wav** files
-    - is not mounted properly
+    - ***paplay*** (*pulseaudio-utils*) is used to play a sound to a specified microphone output, which is mapped to a
+      microphone input at startup.
+    - ***paplay*** is triggered and plays a random file from **/home/zoomrec/audio**
+    - Nothing will be played if directory:
+        - does not contain **.wav** files
+        - is not mounted properly
 
 ### CSV structure
+
 CSV must be formatted as in example/meetings.csv
-  - Delimiter must be a semicolon "**;**"
-  - Only meetings with flag "**record = true**" are joined and recorded
-  - "**description**" is used for filename when recording
-  - "**duration**" in minutes (+5 minutes to the end)
+
+- Delimiter must be a semicolon "**;**"
+- Only meetings with flag "**record = true**" are joined and recorded
+- "**description**" is used for filename when recording
+- "**duration**" in minutes (+5 minutes to the end)
 
 weekday | time | duration | id | password | description | record
 -------- | -------- | -------- | -------- | -------- | -------- | --------
@@ -78,18 +88,23 @@ monday | 14:00 | 90 | 222222222222 | 321523 | Unimportant_Meeting | false
 tuesday| 17:00 | 90 | https://zoom.us/j/123456789?pwd=abc || Meeting_with_URL | true
 
 ### VNC
+
 You can connect to zoomrec via vnc and see what is happening.
 
 #### Connect (default)
+
 Hostname | Port | Password
 -------- | -------- | --------
 localhost   | 5901   | zoomrec
 
 ### Preparation
+
 To have access to the recordings, a volume is mounted, so you need to create a folder that container users can access.
 
 **[ IMPORTANT ]**
+
 #### Create folders and set permissions (on Host)
+
 ```
 mkdir -p recordings/screenshots
 chown -R 1000:1000 recordings
@@ -99,7 +114,9 @@ chown -R 1000:1000 audio
 ```
 
 ### Flags
+
 #### Set timezone (default: Europe/Berlin)
+
 ```
 docker run -d --restart unless-stopped \
   -e TZ=Europe/Berlin \
@@ -109,10 +126,13 @@ docker run -d --restart unless-stopped \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
 ```
+
 #### Set debugging flag (default: False)
-   - screenshot on error
-   - record joining
-   - do not exit container on error
+
+- screenshot on error
+- record joining
+- do not exit container on error
+
 ```
 docker run -d --restart unless-stopped \
   -e DEBUG=True \
@@ -181,6 +201,7 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 ---
 
 ## Supported actions
+
 - [x] Show when the next meeting starts
 - [x] _Join a Meeting_ from csv with id and password
 - [x] Wrong error: _Invalid meeting ID_ / **Leave**
@@ -201,12 +222,12 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 ---
 
 ## Roadmap
+
 - [ ] Refactoring
 - [ ] Create terraform stack to deploy in AWS
 - [ ] _Join a Meeting_ from calendar
 - [ ] _Sign In_ to existing Zoom account
 - [ ] _Join Breakout Room_
-- [ ] Join a meeting and start recording automatically by looking up a calendar
 - [ ] Support to record Google Meet, MS Teams, Cisco WebEx calls too
 - [ ] Ability to monitor recordings sessions in various containers
 
@@ -215,6 +236,7 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 ## Testing
 
 Create unittests for different use cases:
+
 - [ ] Join meeting
 - [ ] Start / Stop ffmpeg and check if file was created
 - [ ] ...
@@ -222,6 +244,7 @@ Create unittests for different use cases:
 ---
 
 ## Support
+
 Feel free. However, if you want to support me and my work, I have some crypto addresses here.
 
 name | address |
@@ -234,4 +257,5 @@ Cardano (ADA) | <details><summary>show</summary><p><img src="doc/support/cardano
 ---
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
