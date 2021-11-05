@@ -1,12 +1,12 @@
-<h1 style="text-align:center">
+<h1 align="center">
     zoomrec	
 </h1>
 
-<h4 style="text-align:center">
+<h4 align="center">
 	A all-in-one solution to automatically join and record Zoom meetings.
 </h4>
 
-<p style="text-align:center">
+<p align="center">
 	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/docker-publish.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/docker-publish.yml/badge.svg" alt="GitHub Workflow Status"></a>
 	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/codeql-analysis.yml/badge.svg" alt="GitHub Workflow Status"></a>
 	<a href="https://github.com/kastldratza/zoomrec/actions/workflows/snyk.yml"><img src="https://github.com/kastldratza/zoomrec/actions/workflows/snyk.yml/badge.svg" alt="GitHub Workflow Status"></a>
