@@ -76,12 +76,12 @@ class BackgroundThread:
         while ONGOING_MEETING:
 
             # Check if recording
-            if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'warn_meeting_recording.png'), confidence=0.9,
+            if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'meeting_is_being_recorded.png'), confidence=0.9,
                                                minSearchTime=2) is not None):
                 logging.info("This meeting is being recorded..")
                 try:
                     x, y = pyautogui.locateCenterOnScreen(os.path.join(
-                        IMG_PATH, 'accept_recording.png'), confidence=0.9)
+                        IMG_PATH, 'got_it.png'), confidence=0.9)
                     pyautogui.click(x, y)
                     logging.info("Accepted recording..")
                 except TypeError:
@@ -532,12 +532,12 @@ def join(meet_id, meet_pw, duration, description):
     logging.info("Joined meeting..")
 
     # Check if recording warning is shown at the beginning
-    if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'warn_meeting_recording.png'), confidence=0.9,
+    if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'meeting_is_being_recorded.png'), confidence=0.9,
                                        minSearchTime=2) is not None):
         logging.info("This meeting is being recorded..")
         try:
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
-                IMG_PATH, 'accept_recording.png'), confidence=0.9)
+                IMG_PATH, 'got_it.png'), confidence=0.9)
             pyautogui.click(x, y)
             logging.info("Accepted recording..")
         except TypeError:
