@@ -22,6 +22,7 @@
 - **Python3** - _Script to automatically join Zoom meetings and control FFmpeg_
 - **FFmpeg** - _Triggered by python script to start/stop screen recording_
 - **Docker** - _Headless VNC Container based on Ubuntu 20.04 with Xfce window manager and TigerVNC_
+- **Telegram** - _Get notified about your recordings_
 
 ---
 
@@ -97,6 +98,11 @@ Hostname | Port | Password
 -------- | -------- | --------
 localhost   | 5901   | zoomrec
 
+### Telegram
+Zoomrec can notify you via Telegram about starting and ending a recording or if joining a meeting failed. All you need is a bot token and a chat id of a Telegram channel.
+
+At first [create a new telegram bot](https://core.telegram.org/bots#6-botfather) to get the bot token. After that create a new channel and add the bot with sufficient permissions to write messages in that channel. Finally [get the chat id of your channel](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35) and look below how to pass your Telegram details to Zoomrec.
+
 ### Preparation
 
 To have access to the recordings, a volume is mounted, so you need to create a folder that container users can access.
@@ -142,7 +148,27 @@ docker run -d --restart unless-stopped \
   -p 5901:5901 \
 kastldratza/zoomrec:latest
 ```
-
+#### Set Telegram details
+```
+docker run -d --restart unless-stopped \
+  -e TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN" \
+  -e TELEGRAM_CHAT_ID="-100_YOUR_CHAT_ID" \
+  -v $(pwd)/recordings:/home/zoomrec/recordings \
+  -v $(pwd)/example/audio:/home/zoomrec/audio \
+  -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
+  -p 5901:5901 \
+kastldratza/zoomrec:latest
+```
+#### Set Zoom display name 
+```
+docker run -d --restart unless-stopped \
+  -e DISPLAY_NAME="zoomrec" \
+  -v $(pwd)/recordings:/home/zoomrec/recordings \
+  -v $(pwd)/example/audio:/home/zoomrec/audio \
+  -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
+  -p 5901:5901 \
+kastldratza/zoomrec:latest
+```
 ### Windows / _cmd_
 
 ```cmd

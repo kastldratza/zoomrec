@@ -10,10 +10,14 @@ import subprocess
 import threading
 import time
 import atexit
+import requests
 from datetime import datetime, timedelta
 
 global ONGOING_MEETING
 global VIDEO_PANEL_HIDED
+global TELEGRAM_TOKEN
+global TELEGRAM_RETRIES
+global TELEGRAM_CHAT_ID
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
@@ -35,20 +39,27 @@ REC_PATH = os.path.join(BASE_PATH, "recordings")
 AUDIO_PATH = os.path.join(BASE_PATH, "audio")
 DEBUG_PATH = os.path.join(REC_PATH, "screenshots")
 
-NAME_LIST = [
-    'iPhone',
-    'iPad',
-    'Macbook',
-    'Desktop',
-    'Huawei',
-    'Mobile',
-    'PC',
-    'Windows',
-    'Home',
-    'MyPC',
-    'Computer',
-    'Android'
-]
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM_RETRIES = 5
+
+DISPLAY_NAME = os.getenv('DISPLAY_NAME')
+if DISPLAY_NAME is None or  len(DISPLAY_NAME) < 3:
+    NAME_LIST = [
+        'iPhone',
+        'iPad',
+        'Macbook',
+        'Desktop',
+        'Huawei',
+        'Mobile',
+        'PC',
+        'Windows',
+        'Home',
+        'MyPC',
+        'Computer',
+        'Android'
+    ]
+    DISPLAY_NAME = random.choice(NAME_LIST)
 
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 CSV_DELIMITER = ';'
@@ -168,7 +179,38 @@ class HideViewOptionsThread:
 
             time.sleep(self.interval)
 
+def send_telegram_message(text):
+    global TELEGRAM_TOKEN
+    global TELEGRAM_CHAT_ID
+    global TELEGRAM_RETRIES
+	
+    if TELEGRAM_TOKEN is None:
+        logging.error("Telegram token is missing. No Telegram messages will be send!")
+        return
+    
+    if TELEGRAM_CHAT_ID is None:
+        logging.error("Telegram chat_id is missing. No Telegram messages will be send!")
+        return
+        
+    if len(TELEGRAM_TOKEN) < 3 or len(TELEGRAM_CHAT_ID) < 3:
+        logging.error("Telegram token or chat_id missing. No Telegram messages will be send!")
+        return
 
+    url_req = "https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage" + "?chat_id=" + TELEGRAM_CHAT_ID + "&text=" + text 
+    tries = 0
+    done = False
+    while not done:
+        results = requests.get(url_req)
+        results = results.json()
+        done = 'ok' in results and results['ok']
+        tries+=1
+        if not done and tries < TELEGRAM_RETRIES:
+            logging.error("Sending Telegram message failed, retring in 5 seconds...")
+            time.sleep(5)
+        if not done and tries >= TELEGRAM_RETRIES:
+            logging.error("Sending Telegram message failed {} times, please check your credentials!".format(tries))
+            done = True
+       
 def check_connecting(zoom_pid, start_date, duration):
     # Check if connecting
     check_periods = 0
@@ -223,7 +265,7 @@ def join_meeting_id(meet_id):
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.hotkey('ctrl', 'a')
-    pyautogui.write(random.choice(NAME_LIST), interval=0.1)
+    pyautogui.write(DISPLAY_NAME, interval=0.1)
 
     # Configure
     pyautogui.press('tab')
@@ -245,7 +287,7 @@ def join_meeting_url():
 
     # Insert name
     pyautogui.hotkey('ctrl', 'a')
-    pyautogui.write(random.choice(NAME_LIST), interval=0.1)
+    pyautogui.write(DISPLAY_NAME, interval=0.1)
 
     # Configure
     pyautogui.press('tab')
@@ -435,6 +477,7 @@ def join(meet_id, meet_pw, duration, description):
         joined = join_meeting_url()
 
     if not joined:
+        send_telegram_message("Failed to join meeting {}!".format(description))
         logging.error("Failed to join meeting!")
         os.killpg(os.getpgid(zoom.pid), signal.SIGQUIT)
         if DEBUG and ffmpeg_debug is not None:
@@ -743,7 +786,10 @@ def join(meet_id, meet_pw, duration, description):
 
     # Start thread to check active screensharing
     HideViewOptionsThread()
-
+    
+    # Send Telegram Notification
+    send_telegram_message("Joined Meeting '{}' and started recording.".format(description))
+    
     meeting_running = True
     while meeting_running:
         time_remaining = end_date - datetime.now()
@@ -774,6 +820,8 @@ def join(meet_id, meet_pw, duration, description):
             if DEBUG:
                 pyautogui.screenshot(os.path.join(DEBUG_PATH, time.strftime(
                     TIME_FORMAT) + "-" + description) + "_ok_error.png")
+                
+    send_telegram_message("Meeting '{}' ended.".format(description))
 
 def play_audio(description):
     # Get all files in audio directory
