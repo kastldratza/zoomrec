@@ -431,8 +431,8 @@ def join(meet_id, meet_pw, duration, description):
         filename = os.path.join(
             REC_PATH, time.strftime(TIME_FORMAT)) + "-" + description + "-JOIN.mkv"
 
-        command = "ffmpeg -nostats -loglevel quiet -f pulse -ac 2 -i 1 -f x11grab -r 30 -s " + resolution + " -i " + \
-                  disp + " -acodec pcm_s16le -vcodec libx264rgb -preset ultrafast -crf 0 -threads 0 -async 1 -vsync 1 " + filename
+        command = "ffmpeg -nostats -loglevel quiet -f pulse -ac 2 -i 1 -f x11grab -r 15 -s " + resolution + " -i " + \
+                  disp + " -acodec opus -b:a 64k -vcodec libx264 -preset ultrafast -crf 32 -tune stillimage -threads 0 -async 1 -vsync 1 " + filename
 
         ffmpeg_debug = subprocess.Popen(
             command, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
@@ -772,8 +772,8 @@ def join(meet_id, meet_pw, duration, description):
     resolution = str(width) + 'x' + str(height)
     disp = os.getenv('DISPLAY')
 
-    command = "ffmpeg -nostats -loglevel error -f pulse -ac 2 -i 1 -f x11grab -r 30 -s " + resolution + " -i " + \
-              disp + " -acodec pcm_s16le -vcodec libx264rgb -preset ultrafast -crf 0 -threads 0 -async 1 -vsync 1 " + filename
+    command = "ffmpeg -nostats -loglevel error -f pulse -ac 2 -i 1 -f x11grab -r 15 -s " + resolution + " -i " + \
+              disp + " -acodec opus -b:a 64k -vcodec libx264 -preset ultrafast -crf 30 -tune stillimage -threads 0 -async 1 -vsync 1 " + filename
 
     ffmpeg = subprocess.Popen(
         command, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
