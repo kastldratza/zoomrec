@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "True" ]]; then
+  set -x
+fi
 
 # Disable screensaver and power management
 xset -dpms &
