@@ -63,7 +63,7 @@ if [[ "$DEBUG" == "True" ]]; then
   xfce4-terminal -H --geometry 85x7+0 --title=zoomrec --hide-toolbar --hide-menubar --hide-scrollbar --hide-borders --zoom=-3 -e "bash -c \"python3 -u ${HOME}/zoomrec.py |& tee /tmp/zoomrec.log\"" &
 else
   # Exit container if something failed
-  xfce4-terminal --geometry 85x7+0 --title=zoomrec --hide-toolbar --hide-menubar --hide-scrollbar --hide-borders --zoom=-3 -e "bash -c \"python3 -u ${HOME}/zoomrec.py |& tee /tmp/zoomrec.log\""
+  xfce4-terminal --geometry 85x7+0 --title=zoomrec --hide-toolbar --hide-menubar --hide-scrollbar --hide-borders --zoom=-3 -e "bash -c \"python3 -u ${HOME}/zoomrec.py |& tee /tmp/zoomrec.log\"" &
 fi
 sleep 1
 tail -F /tmp/zoomrec.log
