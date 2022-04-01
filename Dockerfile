@@ -27,6 +27,7 @@ RUN apt-get update && \
         libapt-pkg6.0 \
         libpsl5 \
         libssl1.1 \
+        libnss3 \
         openssl \
         wget \
         locales \
