@@ -188,12 +188,12 @@ kastldratza/zoomrec:latest
 ### Windows / _PowerShell_
 
 ```powershell
-docker run -d --restart unless-stopped \
-  -v ${PWD}/recordings:/home/zoomrec/recordings \
-  -v ${PWD}/example/audio:/home/zoomrec/audio \
-  -v ${PWD}/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
-  -p 5901:5901 \
-  --security-opt seccomp:unconfined \
+docker run -d --restart unless-stopped `
+  -v ${PWD}/recordings:/home/zoomrec/recordings `
+  -v ${PWD}/example/audio:/home/zoomrec/audio `
+  -v ${PWD}/example/meetings.csv:/home/zoomrec/meetings.csv:ro `
+  -p 5901:5901 `
+  --security-opt seccomp:unconfined `
 kastldratza/zoomrec:latest
 ```
 
