@@ -1,15 +1,17 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV HOME=/home/zoomrec \
     TZ=Europe/Berlin \
     TERM=xfce4-terminal \
     START_DIR=/start \
     DEBIAN_FRONTEND=noninteractive \
-    VNC_RESOLUTION=1024x576 \
+    VNC_RESOLUTION=1280x720 \
     VNC_COL_DEPTH=24 \
     VNC_PW=zoomrec \
     VNC_PORT=5901 \
-    DISPLAY=:1
+    DISPLAY=:1 \
+    GTK_IM_MODULE=ibus \
+    XDG_RUNTIME_DIR=/tmp/runtime-zoomrec
 
 # Add user
 RUN useradd -ms /bin/bash zoomrec -d ${HOME}
@@ -20,89 +22,87 @@ ADD res/requirements.txt ${HOME}/res/requirements.txt
 # Install some tools
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        apt \
-        apt-utils \
-        ca-certificates \
-        publicsuffix \
-        libapt-pkg6.0 \
-        libpsl5 \
-        libssl1.1 \
-        libnss3 \
-        openssl \
-        wget \
-        locales \
-        bzip2 \
-        tzdata && \
-# Generate locales for en_US.UTF-8
+    apt \
+    apt-utils \
+    ca-certificates \
+    publicsuffix \
+    libapt-pkg6.0 \
+    libpsl5 \
+    libssl3 \
+    libnss3 \
+    openssl \
+    wget \
+    locales \
+    bzip2 \
+    tzdata && \
+    # Generate locales for en_US.UTF-8
     locale-gen en_US.UTF-8 && \
-# Install tigervnc
+    # Install tigervnc
     wget -q -O tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
     tar xz -f tigervnc-1.10.0.x86_64.tar.gz --strip 1 -C / && \
     rm -rf tigervnc-1.10.0.x86_64.tar.gz && \
-# Install xfce ui
+    # Install xfce ui
     apt-get install --no-install-recommends -y \
-        supervisor \
-        xfce4 \
-        xfce4-goodies \
-        xfce4-pulseaudio-plugin \
-        xfce4-terminal \
-        xubuntu-icon-theme && \
-# Install pulseaudio
+    supervisor \
+    xfce4 \
+    xfce4-terminal && \
+    # Install pulseaudio
     apt-get install --no-install-recommends -y \
-        pulseaudio \
-        pavucontrol && \
-# Install necessary packages
+    pulseaudio \
+    pavucontrol && \
+    # Install necessary packages
     apt-get install --no-install-recommends -y \
-        ibus \
-        dbus-user-session \
-        dbus-x11 \
-        dbus \
-        at-spi2-core \
-        xauth \
-        x11-xserver-utils \
-        libxkbcommon-x11-0 && \
-# Install Zoom dependencies
+    ibus \
+    dbus-user-session \
+    dbus-x11 \
+    dbus \
+    at-spi2-core \
+    xauth \
+    x11-xserver-utils \
+    libxkbcommon-x11-0 \
+    xdg-utils && \
+    # Install Zoom dependencies
     apt-get install --no-install-recommends -y \
-        libxcb-xinerama0 \
-        libglib2.0-0 \
-        libxcb-shape0 \
-        libxcb-shm0 \
-        libxcb-xfixes0 \
-        libxcb-randr0 \
-        libxcb-image0 \
-        libfontconfig1 \
-        libgl1-mesa-glx \
-        libegl1-mesa \
-        libxi6 \
-        libsm6 \
-        libxrender1 \
-        libpulse0 \
-        libxcomposite1 \
-        libxslt1.1 \
-        libsqlite3-0 \
-        libxcb-keysyms1 \
-        libxcb-xtest0 && \
-# Install Zoom
+    libxcb-xinerama0 \
+    libglib2.0-0 \
+    libxcb-shape0 \
+    libxcb-shm0 \
+    libxcb-xfixes0 \
+    libxcb-randr0 \
+    libxcb-image0 \
+    libfontconfig1 \
+    libgl1-mesa-glx \
+    libegl1-mesa \
+    libxi6 \
+    libsm6 \
+    libxrender1 \
+    libpulse0 \
+    libxcomposite1 \
+    libxslt1.1 \
+    libsqlite3-0 \
+    libxcb-keysyms1 \
+    libxcb-xtest0 && \
+    # Install Zoom
     wget -q -O zoom_amd64.deb https://zoom.us/client/latest/zoom_amd64.deb && \
     dpkg -i zoom_amd64.deb && \
     apt-get -f install -y && \
     rm -rf zoom_amd64.deb && \
-# Install FFmpeg
+    # Install FFmpeg
     apt-get install --no-install-recommends -y \
-        ffmpeg \
-        libavcodec-extra && \
-# Install Python dependencies for script
+    ffmpeg \
+    libavcodec-extra && \
+    # Install Python dependencies for script
     apt-get install --no-install-recommends -y \
-        python3 \
-        python3-pip \
-        python3-tk \
-        python3-dev \
-        python3-setuptools \
-        scrot && \
+    python3 \
+    python3-pip \
+    python3-tk \
+    python3-dev \
+    python3-setuptools \
+    scrot && \
     pip3 install --upgrade --no-cache-dir -r ${HOME}/res/requirements.txt && \
-# Install VLC - optional
+    # Install VLC - optional
     apt-get install --no-install-recommends -y vlc && \
-# Clean up
+    # Clean up
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     apt-get clean -y && \
@@ -126,6 +126,10 @@ ADD res/img ${HOME}/img
 
 # Set permissions
 USER 0
+
+# Disable panel
+RUN echo "#!/bin/bash \nexit 1" > /usr/bin/xfce4-panel
+
 RUN chmod a+x ${START_DIR}/entrypoint.sh && \
     chmod -R a+rw ${START_DIR} && \
     chown -R zoomrec:zoomrec ${HOME} && \

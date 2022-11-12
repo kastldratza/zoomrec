@@ -1,7 +1,8 @@
-testresources
-pyautogui
-schedule
+setuptools
 psutil
+PyAutoGUI~=0.9.52
+schedule~=0.6.0
+requests~=2.24.0
+testresources
 opencv-python
 pillow>=8.1.0
-requests

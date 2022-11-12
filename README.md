@@ -21,14 +21,13 @@
 
 - **Python3** - _Script to automatically join Zoom meetings and control FFmpeg_
 - **FFmpeg** - _Triggered by python script to start/stop screen recording_
-- **Docker** - _Headless VNC Container based on Ubuntu 20.04 with Xfce window manager and TigerVNC_
+- **Docker** - _Headless VNC Container based on Ubuntu 22.04 with Xfce window manager and TigerVNC_
 - **Telegram** - _Get notified about your recordings_
 
 ---
 
-Join with ID and Passcode           |  Join with URL
-:-------------------------:|:-------------------------:
-![](doc/demo/join-meeting-id.gif)  |  ![](doc/demo/join-meeting-url.gif)
+### Demo
+![](doc/demo/join-meeting.gif)
 
 ---
 
@@ -80,7 +79,7 @@ CSV must be formatted as in example/meetings.csv
 - Delimiter must be a semicolon "**;**"
 - Only meetings with flag "**record = true**" are joined and recorded
 - "**description**" is used for filename when recording
-- "**duration**" in minutes (+5 minutes to the end)
+- "**duration**" in minutes
 
 weekday | time | duration | id | password | description | record
 -------- | -------- | -------- | -------- | -------- | -------- | --------
@@ -105,14 +104,14 @@ At first [create a new telegram bot](https://core.telegram.org/bots#6-botfather)
 
 ### Preparation
 
-To have access to the recordings, a volume is mounted, so you need to create a folder that container users can access.
+To have access to the recordings, a volume is mounted, so you need to create a folder that container user can access.
 
 **[ IMPORTANT ]**
 
 #### Create folders and set permissions (on Host)
 
 ```
-mkdir -p recordings/screenshots
+mkdir -p recordings
 chown -R 1000:1000 recordings
 
 mkdir -p audio
@@ -131,13 +130,13 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
   --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+  kastldratza/zoomrec:latest
 ```
 
 #### Set debugging flag (default: False)
 
 - screenshot on error
-- record joining
+- record joining workflow
 - do not exit container on error
 
 ```
@@ -148,7 +147,8 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
   --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+  --name zoomrec \
+  kastldratza/zoomrec:latest
 ```
 #### Set Telegram details
 ```
@@ -160,7 +160,8 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
   --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+  --name zoomrec \
+  kastldratza/zoomrec:latest
 ```
 #### Set Zoom display name 
 ```
@@ -171,7 +172,8 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
   --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+  --name zoomrec \
+  kastldratza/zoomrec:latest
 ```
 ### Windows / _cmd_
 
@@ -182,19 +184,21 @@ docker run -d --restart unless-stopped \
   -v %cd%\example\meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
   --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+  --name zoomrec \
+  kastldratza/zoomrec:latest
 ```
 
 ### Windows / _PowerShell_
 
 ```powershell
-docker run -d --restart unless-stopped \
-  -v ${PWD}/recordings:/home/zoomrec/recordings \
-  -v ${PWD}/example/audio:/home/zoomrec/audio \
-  -v ${PWD}/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
-  -p 5901:5901 \
-  --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+docker run -d --restart unless-stopped `
+  -v ${PWD}/recordings:/home/zoomrec/recordings `
+  -v ${PWD}/example/audio:/home/zoomrec/audio `
+  -v ${PWD}/example/meetings.csv:/home/zoomrec/meetings.csv:ro `
+  -p 5901:5901 `
+  --security-opt seccomp:unconfined `
+  --name zoomrec `
+  kastldratza/zoomrec:latest
 ```
 
 ### Linux / macOS
@@ -206,7 +210,8 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
   --security-opt seccomp:unconfined \
-kastldratza/zoomrec:latest
+  --name zoomrec \
+  kastldratza/zoomrec:latest
 ```
 
 ## Customization example
@@ -222,13 +227,28 @@ docker build -t kastldratza/zoomrec-custom:latest .
 
 # Run image without mounting meetings.csv and audio directory
 # Linux
-docker run -d --restart unless-stopped -v $(pwd)/recordings:/home/zoomrec/recordings -p 5901:5901 --security-opt seccomp:unconfined kastldratza/zoomrec-custom:latest
+docker run -d --restart unless-stopped \
+  -v $(pwd)/recordings:/home/zoomrec/recordings \
+  -p 5901:5901 \
+  --security-opt seccomp:unconfined \
+  --name zoomrec \
+  kastldratza/zoomrec-custom:latest
 
 # Windows / PowerShell
-docker run -d --restart unless-stopped -v ${PWD}/recordings:/home/zoomrec/recordings -p 5901:5901 --security-opt seccomp:unconfined kastldratza/zoomrec-custom:latest
+docker run -d --restart unless-stopped `
+  -v ${PWD}/recordings:/home/zoomrec/recordings `
+  -p 5901:5901 `
+  --security-opt seccomp:unconfined `
+  --name zoomrec `
+  kastldratza/zoomrec-custom:latest
 
 # Windows / cmd
-docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordings -p 5901:5901 --security-opt seccomp:unconfined kastldratza/zoomrec-custom:latest
+docker run -d --restart unless-stopped \
+  -v %cd%\recordings:/home/zoomrec/recordings \
+  -p 5901:5901 \
+  --security-opt seccomp:unconfined \
+  --name zoomrec \
+  kastldratza/zoomrec-custom:latest
 ```
 
 ---
@@ -251,16 +271,19 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 - [x] _This meeting is for authorized attendees only_ / **Leave meeting**
 - [x] Play sound after joining a meeting
 - [x] _Join a Meeting_ from csv with url
-
+- [x] Automatically join with computer audio
+- [x] Python logs out to Docker container #22
+- [x] Replace Zoom Launch with xdg-open #24
 ---
 
 ## Roadmap
 
-- [ ] Refactoring
-- [ ] Create terraform stack to deploy in AWS
-- [ ] _Join a Meeting_ from calendar
 - [ ] _Sign In_ to existing Zoom account
 - [ ] _Join Breakout Room_
+- [ ] Using Telegram Bot to remotely start a join/recording #26
+- [ ] Customize what exactly to record during a meeting #28
+- [ ] Hardware Transcoding #29
+- [ ] _Join a Meeting_ from calendar
 - [ ] Support to record Google Meet, MS Teams, Cisco WebEx calls too
 - [ ] Ability to monitor recordings sessions in various containers
 
@@ -268,24 +291,19 @@ docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordin
 
 ## Testing
 
-Create unittests for different use cases:
-
-- [ ] Join meeting
-- [ ] Start / Stop ffmpeg and check if file was created
-- [ ] ...
+Zoomrec is built daily and automatically tested internally.
 
 ---
 
 ## Support
 
-Feel free. However, if you want to support me and my work, I have some crypto addresses here.
+Have I helped you with this tool? Then I would be very happy about your support.
+You are welcome to send me a donation via cryptocurrency.
 
 name | address |
 ------------ | ------------- |
 Bitcoin (BTC) | <details><summary>show</summary><p><img src="doc/support/bitcoin.png" width="150" /> <br> ```bc1qz2n26d4gq8qjdge9ueeluqut5p0rmv5wjmvnus``` </p></details>
 Ethereum (ETH) | <details><summary>show</summary><p><img src="doc/support/ethereum.png" width="150" /> <br> ```0x984dBf7fb4ab489E33ca004552259484041AeF88``` </p></details>
-Dogecoin (DOGE) | <details><summary>show</summary><p><img src="doc/support/dogecoin.png" width="150" /> <br> ```DHBCESbBPqER83h5E2j6cw6H1QZW8qHtYd``` </p></details>
-Cardano (ADA) | <details><summary>show</summary><p><img src="doc/support/cardano.png" width="150" /> <br> ```addr1q90phcf0qzkx9da8vghtaa04a68gwpat37gvss963r9xfsj7r0sj7q9vv2m6wc3whm6ltm5wsur6hrusepqt4zx2vnpqz307az``` </p></details>
 
 ---
 

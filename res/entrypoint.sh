@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "True" ]]; then
+  set -x
+fi
 
 cleanup () {
     kill -s SIGTERM $!
@@ -32,24 +35,10 @@ echo -e "\nConnect to $VNC_IP:$VNC_PORT"
 "$START_DIR"/xfce.sh &> "$START_DIR"/xfce.log
 
 # Cleanup to ensure pulseaudio is stateless
-rm -rf /var/run/pulse /var/lib/pulse /home/zoomrec/.config/pulse
+rm -rf /var/run/pulse /var/lib/pulse
 
 # Start audio
 pulseaudio -D --exit-idle-time=-1 --log-level=error
-
-# Create speaker Dummy-Output
-pactl load-module module-null-sink sink_name=speaker sink_properties=device.description="speaker" > /dev/null
-pactl set-source-volume 1 100%
-
-# Create microphone Dummy-Output
-pactl load-module module-null-sink sink_name=microphone sink_properties=device.description="microphone" > /dev/null
-pactl set-source-volume 2 100%
-
-# Map microphone-Output to microphone-Input
-pactl load-module module-loopback latency_msec=1 source=2 sink=microphone > /dev/null
-pactl load-module module-remap-source master=microphone.monitor source_name=microphone source_properties=device.description="microphone" > /dev/null
-# Set microphone Volume
-pactl set-source-volume 3 60%
 
 echo -e "\nStart script.."
 sleep 5
@@ -57,8 +46,8 @@ sleep 5
 # Start python script in separated terminal
 if [[ "$DEBUG" == "True" ]]; then
   # Wait if something failed
-  xfce4-terminal -H --geometry 85x7+0 --title=zoomrec --hide-toolbar --hide-menubar --hide-scrollbar --hide-borders --zoom=-3 -e "python3 -u ${HOME}/zoomrec.py"
+  python3 -u "${HOME}"/zoomrec.py || set +x && echo "Zoomrec failed! wait ..." && while true; do sleep 10; done
 else
   # Exit container if something failed
-  xfce4-terminal --geometry 85x7+0 --title=zoomrec --hide-toolbar --hide-menubar --hide-scrollbar --hide-borders --zoom=-3 -e "python3 -u ${HOME}/zoomrec.py"
+  python3 -u "${HOME}"/zoomrec.py
 fi
