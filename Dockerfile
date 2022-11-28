@@ -100,8 +100,6 @@ RUN apt-get update && \
     python3-setuptools \
     scrot && \
     pip3 install --upgrade --no-cache-dir -r ${HOME}/res/requirements.txt && \
-    # Install VLC - optional
-    apt-get install --no-install-recommends -y vlc && \
     # Clean up
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \

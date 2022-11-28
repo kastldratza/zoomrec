@@ -415,10 +415,12 @@ def join(meet_id, meet_pw, duration, description):
         command += " -framerate 25"
         command += " -s " + resolution
         command += " -i " + disp
-        #command += " -acodec pcm_s16le"
-        command += " -c:v libx264rgb"
-        command += " -crf 0"
+        command += " -acodec pcm_s16le"
+        #command += " -acodec libopus -b:a 64k"
+        command += " -vcodec libx264rgb"
         command += " -preset ultrafast"
+        command += " -crf 0"
+        command += " -tune stillimage"
         command += " "
         command += filename
 
@@ -497,7 +499,7 @@ def join(meet_id, meet_pw, duration, description):
     if pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH,
                                                    'wait_for_host.png'),
                                       confidence=0.9,
-                                      minSearchTime=4) is not None:
+                                      minSearchTime=3) is not None:
         meeting_started = False
         logging.info("Please wait for the host to start this meeting.")
 
@@ -566,7 +568,7 @@ def join(meet_id, meet_pw, duration, description):
     check_connecting(zoom.pid, start_date, duration)
 
     in_meeting = False
-    # Check if 'Leave' is shown
+    # Check if 'Leave' or 'View' is shown
     if pyautogui.locateCenterOnScreen(
             os.path.join(IMG_PATH, 'leave.png'), confidence=0.9,
             minSearchTime=3) is not None or pyautogui.locateCenterOnScreen(
@@ -575,7 +577,7 @@ def join(meet_id, meet_pw, duration, description):
                 minSearchTime=3) is not None:
         in_meeting = True
 
-    # Wait until 'Leave' is shown
+    # Wait until 'Leave' or 'View' is shown
     # Exit when meeting ends after time
     # Exit when attempts <= 3
     attempts = 0
@@ -668,27 +670,7 @@ def join(meet_id, meet_pw, duration, description):
     # Start BackgroundThread
     bg_thread = BackgroundThread()
 
-    # State: Already connected to computer audio
-    show_toolbars()
-    if pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'unmute.png'),
-                                      confidence=0.9,
-                                      minSearchTime=3) is not None:
-        logging.info("Already connected to computer audio..")
-    else:
-        logging.error("Not connected to computer audio! Exit!")
-        os.killpg(os.getpgid(zoom.pid), SIGQUIT)
-        bg_thread.terminate()
-        if DEBUG:
-            os.killpg(os.getpgid(ffmpeg_debug.pid), SIGQUIT)
-            atexit.unregister(os.killpg)
-        join(meet_id, meet_pw, duration, description)
-        return
-
-    # 'Say' something if path available (mounted)
-    if os.path.exists(AUDIO_PATH):
-        play_audio()
-
-    time.sleep(2)
+    # Enter fullscreen
     logging.info("Enter fullscreen..")
     show_toolbars()
     try:
@@ -705,7 +687,6 @@ def join(meet_id, meet_pw, duration, description):
                     time.strftime(TIME_FORMAT) + "-" + MEETING_DESCRIPTION) +
                 "_view_error.png")
 
-    time.sleep(2)
     fullscreen = False
     try:
         x, y = pyautogui.locateCenterOnScreen(os.path.join(
@@ -740,7 +721,6 @@ def join(meet_id, meet_pw, duration, description):
                         MEETING_DESCRIPTION) + "_view_options_error.png")
 
         # Switch to fullscreen
-        time.sleep(1)
         show_toolbars()
 
         logging.info("Enter fullscreen..")
@@ -758,7 +738,25 @@ def join(meet_id, meet_pw, duration, description):
                         time.strftime(TIME_FORMAT) + "-" +
                         MEETING_DESCRIPTION) + "_enter_fullscreen_error.png")
 
-        time.sleep(2)
+    # State: Already connected to computer audio
+    show_toolbars()
+    if pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'unmute.png'),
+                                      confidence=0.9,
+                                      minSearchTime=3) is not None:
+        logging.info("Already connected to computer audio..")
+    else:
+        logging.error("Not connected to computer audio! Exit!")
+        os.killpg(os.getpgid(zoom.pid), SIGQUIT)
+        bg_thread.terminate()
+        if DEBUG:
+            os.killpg(os.getpgid(ffmpeg_debug.pid), SIGQUIT)
+            atexit.unregister(os.killpg)
+        join(meet_id, meet_pw, duration, description)
+        return
+
+    # 'Say' something if path available (mounted)
+    if os.path.exists(AUDIO_PATH):
+        play_audio()
 
     # Check if screen sharing is active
     if (pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH,
@@ -779,13 +777,13 @@ def join(meet_id, meet_pw, duration, description):
                         time.strftime(TIME_FORMAT) + "-" +
                         MEETING_DESCRIPTION) + "_view_options_error.png")
 
-        time.sleep(2)
         # Hide video panel
         logging.info("Hide video panel..")
         try:
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'hide_video_panel.png'),
-                                                  confidence=0.9)
+                                                  confidence=0.9,
+                                                  minSearchTime=3)
             pyautogui.click(x, y)
             VIDEO_PANEL_HIDED = True
         except TypeError:
@@ -804,31 +802,30 @@ def join(meet_id, meet_pw, duration, description):
         try:
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'view.png'),
-                                                  confidence=0.9)
+                                                  confidence=0.9,
+                                                  minSearchTime=3)
             pyautogui.click(x, y)
         except TypeError:
             logging.warning("Could not find view!")
-
-        time.sleep(1)
 
         logging.info("Switch to speaker view..")
         try:
             # Speaker view
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'speaker_view.png'),
-                                                  confidence=0.9)
+                                                  confidence=0.9,
+                                                  minSearchTime=3)
             pyautogui.click(x, y)
         except TypeError:
             logging.warning("Could not switch speaker view!")
-
-        time.sleep(1)
 
         try:
             # Minimize panel
             logging.info("Minimize panel..")
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'minimize.png'),
-                                                  confidence=0.9)
+                                                  confidence=0.9,
+                                                  minSearchTime=3)
             pyautogui.click(x, y)
         except TypeError:
             logging.warning("Could not minimize panel!")
@@ -863,10 +860,12 @@ def join(meet_id, meet_pw, duration, description):
     command += " -framerate 25"
     command += " -s " + resolution
     command += " -i " + disp
-    #command += " -acodec pcm_s16le"
-    command += " -c:v libx264rgb"
-    command += " -crf 0"
+    command += " -acodec pcm_s16le"
+    #command += " -acodec libopus -b:a 64k"
+    command += " -vcodec libx264rgb"
     command += " -preset ultrafast"
+    command += " -crf 0"
+    command += " -tune stillimage"
     command += " "
     command += filename
 
