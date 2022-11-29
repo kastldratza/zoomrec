@@ -412,7 +412,7 @@ def join(meet_id, meet_pw, duration, description):
         ## Video
         command += " -f x11grab"
         command += " -draw_mouse 0"
-        command += " -framerate 25"
+        command += " -r 25"
         command += " -s " + resolution
         command += " -i " + disp
         command += " -acodec pcm_s16le"
@@ -727,7 +727,8 @@ def join(meet_id, meet_pw, duration, description):
         try:
             x, y = pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'enter_fullscreen.png'),
-                                                  confidence=0.9)
+                                                  confidence=0.9,
+                                                  minSearchTime=3)
             pyautogui.click(x, y)
         except TypeError:
             logging.error("Could not enter fullscreen!")
@@ -849,6 +850,9 @@ def join(meet_id, meet_pw, duration, description):
     resolution = str(WIDTH) + 'x' + str(HEIGHT)
     disp = os.getenv('DISPLAY')
 
+
+    command = "ffmpeg -nostats -loglevel quiet -f pulse -ac 2 -i 1 -f x11grab -r 30 -s " + resolution + " -i " + \
+                  disp + " -acodec pcm_s16le -vcodec libx264rgb -preset ultrafast -crf 0 -threads 0 -async 1 -vsync 1 " + filename
     # Recording with ffmpeg
     command = "ffmpeg"
     command += " -nostats -loglevel error"
@@ -857,7 +861,7 @@ def join(meet_id, meet_pw, duration, description):
     ## Video
     command += " -f x11grab"
     command += " -draw_mouse 0"
-    command += " -framerate 25"
+    command += " -r 25"
     command += " -s " + resolution
     command += " -i " + disp
     command += " -acodec pcm_s16le"
