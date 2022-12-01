@@ -420,6 +420,7 @@ def join(meet_id, meet_pw, duration, description):
         command += " -vcodec libx264rgb"
         command += " -preset ultrafast"
         command += " -crf 0"
+        command += " -threads 0 -async 1 -vsync 1"
         command += " -tune stillimage"
         command += " "
         command += filename
@@ -850,9 +851,6 @@ def join(meet_id, meet_pw, duration, description):
     resolution = str(WIDTH) + 'x' + str(HEIGHT)
     disp = os.getenv('DISPLAY')
 
-
-    command = "ffmpeg -nostats -loglevel quiet -f pulse -ac 2 -i 1 -f x11grab -r 30 -s " + resolution + " -i " + \
-                  disp + " -acodec pcm_s16le -vcodec libx264rgb -preset ultrafast -crf 0 -threads 0 -async 1 -vsync 1 " + filename
     # Recording with ffmpeg
     command = "ffmpeg"
     command += " -nostats -loglevel error"
@@ -869,6 +867,7 @@ def join(meet_id, meet_pw, duration, description):
     command += " -vcodec libx264rgb"
     command += " -preset ultrafast"
     command += " -crf 0"
+    command += " -threads 0 -async 1 -vsync 1"
     command += " -tune stillimage"
     command += " "
     command += filename
