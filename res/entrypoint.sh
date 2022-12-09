@@ -38,7 +38,7 @@ echo -e "\nConnect to $VNC_IP:$VNC_PORT"
 rm -rf /var/run/pulse /var/lib/pulse
 
 # Start audio
-pulseaudio -D --exit-idle-time=-1 --log-level=error
+pulseaudio -D -vvv --exit-idle-time=-1 --log-level=error
 
 echo -e "\nStart script.."
 sleep 5

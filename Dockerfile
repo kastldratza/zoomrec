@@ -49,7 +49,13 @@ RUN apt-get update && \
     # Install pulseaudio
     apt-get install --no-install-recommends -y \
     pulseaudio \
-    pavucontrol && \
+    pavucontrol \
+    alsa-base \
+    alsa-utils \
+    libsndfile1-dev \
+    libasound2-dev \
+    libasound2-plugins \
+    apulse && \
     # Install necessary packages
     apt-get install --no-install-recommends -y \
     ibus \
@@ -106,13 +112,37 @@ RUN apt-get update && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
 
+
+RUN apt-get update && apt-get install gcc make -y
+
+#RUN wget -q -O alsa-driver-1.0.9rc4a.tar.bz2 https://www.alsa-project.org/files/pub/driver/alsa-driver-1.0.9rc4a.tar.bz2 && \
+#    tar xf alsa-driver-1.0.9rc4a.tar.bz2 && \
+#    ls && \
+#    ./alsa-driver-1.0.9rc4a/configure && make && \
+#    rm -rf alsa-plugins-1.2.7.1.tar.bz2
+
+#RUN wget -q -O alsa-lib-0.0.9.tar.gz https://www.alsa-project.org/files/pub/lib/stable/alsa-lib-0.0.9.tar.gz && \
+#    tar xz -f alsa-lib-0.0.9.tar.gz && \
+#    ./alsa-lib/configure && make && \
+#    ls && \
+#    rm -rf alsa-plugins-1.2.7.1.tar.bz2
+
+RUN wget -q -O alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
+    tar xf alsa-plugins-1.2.7.1.tar.bz2 && \
+    ls && \
+    ./alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && make install && \
+    ls && \
+    rm -rf alsa-plugins-1.2.7.1.tar.bz2
+
 # Allow access to pulseaudio
-RUN adduser zoomrec pulse-access
+RUN adduser zoomrec pulse-access && \
+    adduser zoomrec audio
 
 USER zoomrec
 
 # Add home resources
 ADD res/home/ ${HOME}/
+#ADD res/etc/ /etc/
 
 # Add startup
 ADD res/entrypoint.sh ${START_DIR}/entrypoint.sh

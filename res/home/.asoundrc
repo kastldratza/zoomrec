@@ -1,0 +1,16 @@
+pcm.pulse {
+    type pulse
+    fallback "sysdefault"
+}
+
+ctl.pulse {
+    type pulse
+    fallback "sysdefault"
+}
+
+pcm.!default {
+    type pulse
+}
+ctl.!default {
+    type pulse
+}

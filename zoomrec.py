@@ -407,23 +407,23 @@ def join(meet_id, meet_pw, duration, description):
         # Recording with ffmpeg
         command = "ffmpeg"
         command += " -nostats -loglevel error"
-        ## Audio
-        command += " -f pulse -ac 2 -i 1"
-        ## Video
-        command += " -f x11grab"
-        command += " -draw_mouse 0"
-        command += " -r 25"
         command += " -s " + resolution
+        command += " -r 30"
+        command += " -f x11grab"
         command += " -i " + disp
+        command += " -f pulse -ac 2 -i 1"
         command += " -acodec pcm_s16le"
-        #command += " -acodec libopus -b:a 64k"
         command += " -vcodec libx264rgb"
         command += " -preset ultrafast"
+        command += " -qp 0 -pix_fmt yuv444p"
         command += " -crf 0"
-        command += " -threads 0 -async 1 -vsync 1"
-        command += " -tune stillimage"
+        #command += " -tune stillimage"
         command += " "
         command += filename
+
+        command = "ffmpeg -nostats -loglevel error -f alsa -ac 2 -i pulse:1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
+        logging.debug(command)
+        #command = "ffmpeg -nostats -loglevel error -f pulse -i 1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
 
         ffmpeg_debug = Popen(command,
                              stdout=STDOUT,
@@ -858,8 +858,8 @@ def join(meet_id, meet_pw, duration, description):
     command += " -f pulse -ac 2 -i 1"
     ## Video
     command += " -f x11grab"
-    command += " -draw_mouse 0"
-    command += " -r 25"
+    #command += " -draw_mouse 0"
+    command += " -r 30"
     command += " -s " + resolution
     command += " -i " + disp
     command += " -acodec pcm_s16le"
@@ -868,10 +868,12 @@ def join(meet_id, meet_pw, duration, description):
     command += " -preset ultrafast"
     command += " -crf 0"
     command += " -threads 0 -async 1 -vsync 1"
-    command += " -tune stillimage"
+    #command += " -tune stillimage"
     command += " "
     command += filename
 
+    command = "ffmpeg -nostats -loglevel error -f alsa -ac 2 -i pulse:1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
+    logging.debug(command)
     ffmpeg = Popen(command, stdout=STDOUT, shell=True, preexec_fn=os.setsid)
 
     atexit.register(os.killpg, os.getpgid(ffmpeg.pid), SIGQUIT)

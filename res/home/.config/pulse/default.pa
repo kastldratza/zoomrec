@@ -6,6 +6,7 @@ load-module module-udev-detect tsched=0
 # Create speaker Dummy-Output
 load-module module-null-sink sink_name=speaker sink_properties=device.description="speaker"
 set-source-volume 1 65536
+set-default-sink 1
 
 # Create microphone Dummy-Output
 load-module module-null-sink sink_name=microphone sink_properties=device.description="microphone"
@@ -14,4 +15,4 @@ set-source-volume 2 65536
 # Map microphone-Output to microphone-Input
 load-module module-loopback latency_msec=1 source=2 sink=microphone
 load-module module-remap-source master=microphone.monitor source_name=microphone source_properties=device.description="microphone"
-set-source-volume 3 32768
+set-source-volume 3 65536
