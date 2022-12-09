@@ -343,10 +343,10 @@ def show_toolbars():
     pyautogui.moveTo(center_x, center_y)
 
     # right
-    pyautogui.moveTo(center_x + 3, center_y, duration=0.2)
+    pyautogui.moveTo(center_x + 3, center_y, duration=0.1)
 
     # left
-    pyautogui.moveTo(center_x - 3, center_y, duration=0.2)
+    pyautogui.moveTo(center_x - 3, center_y, duration=0.1)
 
 
 def unmute():
@@ -407,23 +407,26 @@ def join(meet_id, meet_pw, duration, description):
         # Recording with ffmpeg
         command = "ffmpeg"
         command += " -nostats -loglevel error"
-        command += " -s " + resolution
-        command += " -r 30"
+        command += " -f alsa -ac 2 -i pulse:1"
         command += " -f x11grab"
-        command += " -i " + disp
-        command += " -f pulse -ac 2 -i 1"
-        command += " -acodec pcm_s16le"
+        command += " -draw_mouse 0"
+        command += " -r 30"
+        command += " -s " + resolution
+        command += " -i " + disp + ".0"
         command += " -vcodec libx264rgb"
+
+        command += " -pix_fmt yuv420p"
         command += " -preset ultrafast"
-        command += " -qp 0 -pix_fmt yuv444p"
         command += " -crf 0"
+        command += " -threads 0"
+        command += " -acodec pcm_s16le -y"
+        #command += " -async 1 -vsync 1"
         #command += " -tune stillimage"
         command += " "
         command += filename
 
-        command = "ffmpeg -nostats -loglevel error -f alsa -ac 2 -i pulse:1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
+        #command = "ffmpeg -nostats -loglevel error -f alsa -ac 2 -i pulse:1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
         logging.debug(command)
-        #command = "ffmpeg -nostats -loglevel error -f pulse -i 1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
 
         ffmpeg_debug = Popen(command,
                              stdout=STDOUT,
@@ -854,25 +857,25 @@ def join(meet_id, meet_pw, duration, description):
     # Recording with ffmpeg
     command = "ffmpeg"
     command += " -nostats -loglevel error"
-    ## Audio
-    command += " -f pulse -ac 2 -i 1"
-    ## Video
+    command += " -f alsa -ac 2 -i pulse:1"
     command += " -f x11grab"
-    #command += " -draw_mouse 0"
+    command += " -draw_mouse 0"
     command += " -r 30"
     command += " -s " + resolution
-    command += " -i " + disp
-    command += " -acodec pcm_s16le"
-    #command += " -acodec libopus -b:a 64k"
+    command += " -i " + disp + ".0"
     command += " -vcodec libx264rgb"
+
+    command += " -pix_fmt yuv420p"
     command += " -preset ultrafast"
     command += " -crf 0"
-    command += " -threads 0 -async 1 -vsync 1"
+    command += " -threads 0"
+    command += " -acodec pcm_s16le -y"
+    #command += " -async 1 -vsync 1"
     #command += " -tune stillimage"
     command += " "
     command += filename
 
-    command = "ffmpeg -nostats -loglevel error -f alsa -ac 2 -i pulse:1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
+    #command = "ffmpeg -nostats -loglevel error -f alsa -ac 2 -i pulse:1 -f x11grab -r 30 -s " + resolution+" -i "+disp+".0 -vcodec libx264rgb -pix_fmt yuv420p -preset ultrafast -crf 0 -threads 0 -acodec pcm_s16le -y "+ filename
     logging.debug(command)
     ffmpeg = Popen(command, stdout=STDOUT, shell=True, preexec_fn=os.setsid)
 

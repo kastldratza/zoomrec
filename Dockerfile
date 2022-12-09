@@ -21,7 +21,7 @@ ADD res/requirements.txt ${HOME}/res/requirements.txt
 
 # Install some tools
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends --no-install-suggests -y \
     apt \
     apt-utils \
     ca-certificates \
@@ -34,30 +34,47 @@ RUN apt-get update && \
     wget \
     locales \
     bzip2 \
-    tzdata && \
+    tzdata \ 
+    gcc \
+    make \
+    scrot && \
     # Generate locales for en_US.UTF-8
-    locale-gen en_US.UTF-8 && \
-    # Install tigervnc
-    wget -q -O tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
+    locale-gen en_US.UTF-8
+
+# Install tigervnc
+RUN wget -q -O tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
     tar xz -f tigervnc-1.10.0.x86_64.tar.gz --strip 1 -C / && \
-    rm -rf tigervnc-1.10.0.x86_64.tar.gz && \
-    # Install xfce ui
-    apt-get install --no-install-recommends -y \
+    rm -rf tigervnc-1.10.0.x86_64.tar.gz
+
+# Install xfce ui
+RUN apt-get install --no-install-recommends --no-install-suggests -y \
     supervisor \
     xfce4 \
-    xfce4-terminal && \
-    # Install pulseaudio
-    apt-get install --no-install-recommends -y \
-    pulseaudio \
-    pavucontrol \
+    xfce4-terminal
+
+# Install alsa
+RUN apt-get update && \
+    apt-get install -y \
     alsa-base \
     alsa-utils \
     libsndfile1-dev \
     libasound2-dev \
     libasound2-plugins \
-    apulse && \
-    # Install necessary packages
-    apt-get install --no-install-recommends -y \
+    # Install alsa-plugins
+    gcc \
+    make && \
+    wget -q -O alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
+    tar xf alsa-plugins-1.2.7.1.tar.bz2 && \
+    ./alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && make install && \
+    rm -rf alsa-plugins-1.2.7.1.tar.bz2
+
+# Install pulseaudio
+RUN apt-get install --no-install-recommends --no-install-suggests -y \
+    pulseaudio \
+    pavucontrol
+
+# Install necessary packages
+RUN apt-get install --no-install-recommends --no-install-suggests -y \
     ibus \
     dbus-user-session \
     dbus-x11 \
@@ -66,9 +83,10 @@ RUN apt-get update && \
     xauth \
     x11-xserver-utils \
     libxkbcommon-x11-0 \
-    xdg-utils && \
-    # Install Zoom dependencies
-    apt-get install --no-install-recommends -y \
+    xdg-utils
+
+# Install Zoom dependencies
+RUN apt-get install --no-install-recommends --no-install-suggests -y \
     libxcb-xinerama0 \
     libglib2.0-0 \
     libxcb-shape0 \
@@ -92,49 +110,29 @@ RUN apt-get update && \
     wget -q -O zoom_amd64.deb https://zoom.us/client/latest/zoom_amd64.deb && \
     dpkg -i zoom_amd64.deb && \
     apt-get -f install -y && \
-    rm -rf zoom_amd64.deb && \
-    # Install FFmpeg
-    apt-get install --no-install-recommends -y \
+    rm -rf zoom_amd64.deb
+
+# Install FFmpeg
+RUN apt-get install --no-install-recommends -y \
     ffmpeg \
-    libavcodec-extra && \
-    # Install Python dependencies for script
-    apt-get install --no-install-recommends -y \
+    libavcodec-extra
+
+# Install Python dependencies for script
+RUN apt-get install --no-install-recommends -y \
     python3 \
     python3-pip \
     python3-tk \
     python3-dev \
-    python3-setuptools \
-    scrot && \
-    pip3 install --upgrade --no-cache-dir -r ${HOME}/res/requirements.txt && \
-    # Clean up
-    apt-get autoremove --purge -y && \
+    python3-setuptools && \
+    pip3 install --upgrade --no-cache-dir -r ${HOME}/res/requirements.txt
+
+# Clean up
+RUN apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
 
-
-RUN apt-get update && apt-get install gcc make -y
-
-#RUN wget -q -O alsa-driver-1.0.9rc4a.tar.bz2 https://www.alsa-project.org/files/pub/driver/alsa-driver-1.0.9rc4a.tar.bz2 && \
-#    tar xf alsa-driver-1.0.9rc4a.tar.bz2 && \
-#    ls && \
-#    ./alsa-driver-1.0.9rc4a/configure && make && \
-#    rm -rf alsa-plugins-1.2.7.1.tar.bz2
-
-#RUN wget -q -O alsa-lib-0.0.9.tar.gz https://www.alsa-project.org/files/pub/lib/stable/alsa-lib-0.0.9.tar.gz && \
-#    tar xz -f alsa-lib-0.0.9.tar.gz && \
-#    ./alsa-lib/configure && make && \
-#    ls && \
-#    rm -rf alsa-plugins-1.2.7.1.tar.bz2
-
-RUN wget -q -O alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
-    tar xf alsa-plugins-1.2.7.1.tar.bz2 && \
-    ls && \
-    ./alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && make install && \
-    ls && \
-    rm -rf alsa-plugins-1.2.7.1.tar.bz2
-
-# Allow access to pulseaudio
+# Allow access to pulseaudio and alsa
 RUN adduser zoomrec pulse-access && \
     adduser zoomrec audio
 
@@ -142,7 +140,6 @@ USER zoomrec
 
 # Add home resources
 ADD res/home/ ${HOME}/
-#ADD res/etc/ /etc/
 
 # Add startup
 ADD res/entrypoint.sh ${START_DIR}/entrypoint.sh
@@ -152,12 +149,12 @@ ADD res/xfce.sh ${START_DIR}/xfce.sh
 ADD zoomrec.py ${HOME}/
 ADD res/img ${HOME}/img
 
-# Set permissions
 USER 0
 
 # Disable panel
 RUN echo "#!/bin/bash \nexit 1" > /usr/bin/xfce4-panel
 
+# Set permissions
 RUN chmod a+x ${START_DIR}/entrypoint.sh && \
     chmod -R a+rw ${START_DIR} && \
     chown -R zoomrec:zoomrec ${HOME} && \
