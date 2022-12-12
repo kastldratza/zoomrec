@@ -9,7 +9,7 @@ RUN useradd -ms /bin/bash zoomrec -d ${HOME}
 WORKDIR ${HOME}
 
 ADD res/requirements.txt ${HOME}/res/requirements.txt
-ADD res/install/ ${HOME}/res/install/
+#ADD res/install/ ${HOME}/res/install/
 
 # Install some tools
 RUN apt-get update && \
