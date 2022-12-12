@@ -62,7 +62,8 @@ RUN apt-get update && \
     libasound2-plugins \
     # Install alsa-plugins
     gcc \
-    make && \
+    make \
+    build-essential && \
     wget -q -O alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
     tar xf alsa-plugins-1.2.7.1.tar.bz2 && \
     ./alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && make install && \
