@@ -34,9 +34,9 @@ RUN apt-get update && \
     locale-gen en_US.UTF-8
 
 # Install tigervnc
-RUN wget -q -O ${HOME}/res/install/tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
-    tar xz -f ${HOME}/res/install/tigervnc-1.10.0.x86_64.tar.gz --strip 1 -C / && \
-    rm -rf ${HOME}/res/install/tigervnc-1.10.0.x86_64.tar.gz
+RUN wget -q -O ${HOME}/res/tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
+    tar xz -f ${HOME}/res/tigervnc-1.10.0.x86_64.tar.gz --strip 1 -C / && \
+    rm -rf ${HOME}/res/tigervnc-1.10.0.x86_64.tar.gz
 
 # Install xfce ui
 RUN apt-get update && \
@@ -58,11 +58,11 @@ RUN apt-get update && \
     make \
     build-essential \
     file && \
-    wget -q -O ${HOME}/res/install/alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
-    tar xf ${HOME}/res/install/alsa-plugins-1.2.7.1.tar.bz2 -C ${HOME}/res/install/ && \
-    sh ${HOME}/res/install/alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && \
+    wget -q -O ${HOME}/res/alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
+    tar xf ${HOME}/res/alsa-plugins-1.2.7.1.tar.bz2 -C ${HOME}/res/ && \
+    sh ${HOME}/res/alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && \
     make install && \
-    rm -rf ${HOME}/res/install/alsa-plugins-1.2.7.1.tar.bz2 ${HOME}/res/install/alsa-plugins-1.2.7.1
+    rm -rf ${HOME}/res/alsa-plugins-1.2.7.1.tar.bz2 ${HOME}/res/alsa-plugins-1.2.7.1
 
 # Install pulseaudio
 RUN apt-get update && \
