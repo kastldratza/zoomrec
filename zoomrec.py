@@ -70,6 +70,7 @@ class BackgroundThread:
         self._running = False
 
     def run(self):
+        global VIDEO_PANEL_HIDED
         global ONGOING_MEETING
         ONGOING_MEETING = True
 
@@ -99,32 +100,8 @@ class BackgroundThread:
                                              confidence=0.9) is not None):
                 ONGOING_MEETING = False
                 logging.info("Meeting ended by host..")
-            time.sleep(self.interval)
 
-
-# Check continuously if screen sharing is active
-class HideViewOptionsThread:
-
-    def __init__(self, interval=10):
-        # Set running state
-        self._running = True
-        # Sleep interval between
-        self.interval = interval
-
-        thread = Thread(target=self.run, args=())
-        # Daemonize thread
-        thread.daemon = True
-        # Start the execution
-        thread.start()
-
-    def terminate(self):
-        logging.info("HideViewOptionsThread: terminated")
-        self._running = False
-
-    def run(self):
-        global VIDEO_PANEL_HIDED
-        logging.info("HideViewOptionsThread: started")
-        while self._running and ONGOING_MEETING:
+            # Check continuously if screen sharing is active
             # Check if host is sharing poll results
             if (pyautogui.locateCenterOnScreen(os.path.join(
                     IMG_PATH, 'host_is_sharing_poll_results.png'),
@@ -185,7 +162,6 @@ class HideViewOptionsThread:
                 except TypeError:
                     logging.error("Could not find view options!")
             time.sleep(self.interval)
-
 
 def get_name():
     display_name = os.getenv('DISPLAY_NAME')
@@ -343,19 +319,17 @@ def show_toolbars():
     pyautogui.moveTo(center_x, center_y)
 
     # right
-    pyautogui.moveTo(center_x + 3, center_y, duration=0.1)
+    pyautogui.moveTo(center_x + 3, center_y)
 
     # left
-    pyautogui.moveTo(center_x - 3, center_y, duration=0.1)
+    pyautogui.moveTo(center_x - 3, center_y)
 
 
 def unmute():
     try:
         show_toolbars()
-        x, y = pyautogui.locateCenterOnScreen(os.path.join(
-            IMG_PATH, 'unmute.png'),
-                                              confidence=0.9)
-        pyautogui.click(x, y)
+        pyautogui.click(pyautogui.locateCenterOnScreen(os.path.join(
+            IMG_PATH, 'unmute.png'), confidence=0.9))
         return True
     except TypeError:
         logging.error("Could not unmute!")
@@ -414,7 +388,6 @@ def join(meet_id, meet_pw, duration, description):
         command += " -s " + resolution
         command += " -i " + disp + ".0"
         command += " -vcodec libx264rgb"
-
         command += " -pix_fmt yuv420p"
         command += " -preset ultrafast"
         command += " -crf 0"
@@ -696,7 +669,7 @@ def join(meet_id, meet_pw, duration, description):
         x, y = pyautogui.locateCenterOnScreen(os.path.join(
             IMG_PATH, 'fullscreen.png'),
                                               confidence=0.9,
-                                              minSearchTime=3)
+                                              minSearchTime=4)
         pyautogui.click(x, y)
         fullscreen = True
     except TypeError:
@@ -743,6 +716,7 @@ def join(meet_id, meet_pw, duration, description):
                         time.strftime(TIME_FORMAT) + "-" +
                         MEETING_DESCRIPTION) + "_enter_fullscreen_error.png")
 
+    time.sleep(2)
     # State: Already connected to computer audio
     show_toolbars()
     if pyautogui.locateCenterOnScreen(os.path.join(IMG_PATH, 'unmute.png'),
@@ -769,10 +743,9 @@ def join(meet_id, meet_pw, duration, description):
                                        confidence=0.9) is not None):
         logging.info("Screen sharing active..")
         try:
-            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            pyautogui.click(pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'view_options.png'),
-                                                  confidence=0.9)
-            pyautogui.click(x, y)
+                                                  confidence=0.9))
         except TypeError:
             logging.error("Could not find view options!")
             if DEBUG:
@@ -785,11 +758,10 @@ def join(meet_id, meet_pw, duration, description):
         # Hide video panel
         logging.info("Hide video panel..")
         try:
-            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            pyautogui.click(pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'hide_video_panel.png'),
                                                   confidence=0.9,
-                                                  minSearchTime=3)
-            pyautogui.click(x, y)
+                                                  minSearchTime=3))
             VIDEO_PANEL_HIDED = True
         except TypeError:
             logging.error("Could not hide video panel!")
@@ -805,33 +777,30 @@ def join(meet_id, meet_pw, duration, description):
 
         logging.info("Switch view..")
         try:
-            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            pyautogui.click(pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'view.png'),
                                                   confidence=0.9,
-                                                  minSearchTime=3)
-            pyautogui.click(x, y)
+                                                  minSearchTime=3))
         except TypeError:
             logging.warning("Could not find view!")
 
         logging.info("Switch to speaker view..")
         try:
             # Speaker view
-            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            pyautogui.click(pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'speaker_view.png'),
                                                   confidence=0.9,
-                                                  minSearchTime=3)
-            pyautogui.click(x, y)
+                                                  minSearchTime=3))
         except TypeError:
             logging.warning("Could not switch speaker view!")
 
         try:
             # Minimize panel
             logging.info("Minimize panel..")
-            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+            pyautogui.click(pyautogui.locateCenterOnScreen(os.path.join(
                 IMG_PATH, 'minimize.png'),
                                                   confidence=0.9,
-                                                  minSearchTime=3)
-            pyautogui.click(x, y)
+                                                  minSearchTime=3))
         except TypeError:
             logging.warning("Could not minimize panel!")
 
@@ -883,9 +852,6 @@ def join(meet_id, meet_pw, duration, description):
 
     start_date = datetime.now()
     end_date = start_date + timedelta(seconds=duration)
-
-    # Start thread to check active screen sharing
-    hvo_thread = HideViewOptionsThread()
 
     # Send Telegram Notification
     send_telegram_message("Joined Meeting '{}' and started recording.".format(

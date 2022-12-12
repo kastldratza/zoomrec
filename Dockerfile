@@ -1,23 +1,15 @@
 FROM ubuntu:22.04
 
 ENV HOME=/home/zoomrec \
-    TZ=Europe/Berlin \
-    TERM=xfce4-terminal \
     START_DIR=/start \
-    DEBIAN_FRONTEND=noninteractive \
-    VNC_RESOLUTION=1280x720 \
-    VNC_COL_DEPTH=24 \
-    VNC_PW=zoomrec \
-    VNC_PORT=5901 \
-    DISPLAY=:1 \
-    GTK_IM_MODULE=ibus \
-    XDG_RUNTIME_DIR=/tmp/runtime-zoomrec
+    DEBIAN_FRONTEND=noninteractive
 
 # Add user
 RUN useradd -ms /bin/bash zoomrec -d ${HOME}
 WORKDIR ${HOME}
 
 ADD res/requirements.txt ${HOME}/res/requirements.txt
+ADD res/install/ ${HOME}/res/install/
 
 # Install some tools
 RUN apt-get update && \
@@ -42,19 +34,20 @@ RUN apt-get update && \
     locale-gen en_US.UTF-8
 
 # Install tigervnc
-RUN wget -q -O tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
-    tar xz -f tigervnc-1.10.0.x86_64.tar.gz --strip 1 -C / && \
-    rm -rf tigervnc-1.10.0.x86_64.tar.gz
+RUN wget -q -O ${HOME}/res/install/tigervnc-1.10.0.x86_64.tar.gz https://sourceforge.net/projects/tigervnc/files/stable/1.10.0/tigervnc-1.10.0.x86_64.tar.gz && \
+    tar xz -f ${HOME}/res/install/tigervnc-1.10.0.x86_64.tar.gz --strip 1 -C / && \
+    rm -rf ${HOME}/res/install/tigervnc-1.10.0.x86_64.tar.gz
 
 # Install xfce ui
-RUN apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y \
     supervisor \
     xfce4 \
     xfce4-terminal
 
 # Install alsa
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install --no-install-recommends --no-install-suggests -y \
     alsa-base \
     alsa-utils \
     libsndfile1-dev \
@@ -63,19 +56,23 @@ RUN apt-get update && \
     # Install alsa-plugins
     gcc \
     make \
-    build-essential && \
-    wget -q -O alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
-    tar xf alsa-plugins-1.2.7.1.tar.bz2 && \
-    ./alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && make install && \
-    rm -rf alsa-plugins-1.2.7.1.tar.bz2
+    build-essential \
+    file && \
+    wget -q -O ${HOME}/res/install/alsa-plugins-1.2.7.1.tar.bz2 https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.7.1.tar.bz2 && \
+    tar xf ${HOME}/res/install/alsa-plugins-1.2.7.1.tar.bz2 -C ${HOME}/res/install/ && \
+    sh ${HOME}/res/install/alsa-plugins-1.2.7.1/configure --sysconfdir=/etc && \
+    make install && \
+    rm -rf ${HOME}/res/install/alsa-plugins-1.2.7.1.tar.bz2 ${HOME}/res/install/alsa-plugins-1.2.7.1
 
 # Install pulseaudio
-RUN apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y \
     pulseaudio \
     pavucontrol
 
 # Install necessary packages
-RUN apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y \
     ibus \
     dbus-user-session \
     dbus-x11 \
@@ -87,7 +84,8 @@ RUN apt-get install --no-install-recommends --no-install-suggests -y \
     xdg-utils
 
 # Install Zoom dependencies
-RUN apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y \
     libxcb-xinerama0 \
     libglib2.0-0 \
     libxcb-shape0 \
@@ -114,18 +112,22 @@ RUN apt-get install --no-install-recommends --no-install-suggests -y \
     rm -rf zoom_amd64.deb
 
 # Install FFmpeg
-RUN apt-get install --no-install-recommends -y \
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
     ffmpeg \
     libavcodec-extra
 
-# Install Python dependencies for script
-RUN apt-get install --no-install-recommends -y \
+# Install Python
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
     python3 \
     python3-pip \
     python3-tk \
     python3-dev \
-    python3-setuptools && \
-    pip3 install --upgrade --no-cache-dir -r ${HOME}/res/requirements.txt
+    python3-setuptools
+
+# Install Python dependencies
+RUN pip3 install --upgrade --no-cache-dir -r ${HOME}/res/requirements.txt
 
 # Clean up
 RUN apt-get autoremove --purge -y && \
@@ -161,6 +163,17 @@ RUN chmod a+x ${START_DIR}/entrypoint.sh && \
     chown -R zoomrec:zoomrec ${HOME} && \
     find ${HOME}/ -name '*.sh' -exec chmod -v a+x {} + && \
     find ${HOME}/ -name '*.desktop' -exec chmod -v a+x {} +
+
+
+ENV TZ=Europe/Berlin \
+    TERM=xfce4-terminal \
+    VNC_RESOLUTION=1280x720 \
+    VNC_COL_DEPTH=24 \
+    VNC_PW=zoomrec \
+    VNC_PORT=5901 \
+    DISPLAY=:1 \
+    GTK_IM_MODULE=ibus \
+    XDG_RUNTIME_DIR=/tmp/runtime-zoomrec
 
 EXPOSE ${VNC_PORT}
 USER zoomrec

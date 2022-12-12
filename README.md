@@ -15,6 +15,7 @@
     <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/kastldratza/zoomrec">
     <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/kastldratza/zoomrec/latest">
     <img alt="Github Stars" src="https://img.shields.io/github/stars/kastldratza/zoomrec.svg">
+    <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/kastldratza">
 </p>
 
 ---
