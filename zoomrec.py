@@ -877,7 +877,6 @@ def join(meet_id, meet_pw, duration, description):
     os.killpg(os.getpgid(ffmpeg.pid), SIGQUIT)
     atexit.unregister(os.killpg)
     bg_thread.terminate()
-    hvo_thread.terminate()
 
     if not ONGOING_MEETING:
         try:
