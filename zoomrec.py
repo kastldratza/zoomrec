@@ -159,8 +159,8 @@ class HideViewOptionsThread:
                         if pyautogui.locateOnScreen(os.path.join(IMG_PATH, 'show_video_panel.png'),
                                                     confidence=0.9) is not None:
                             # Leave 'Show video panel' and move mouse from screen
-                            pyautogui.moveTo(0, 0)
-                            pyautogui.click(0, 0)
+                            pyautogui.moveTo(0, 100)
+                            pyautogui.click(0, 100)
                             VIDEO_PANEL_HIDED = True
                         else:
                             try:
@@ -168,7 +168,7 @@ class HideViewOptionsThread:
                                     IMG_PATH, 'hide_video_panel.png'), confidence=0.9)
                                 pyautogui.click(x, y)
                                 # Move mouse from screen
-                                pyautogui.moveTo(0, 0)
+                                pyautogui.moveTo(0, 100)
                                 VIDEO_PANEL_HIDED = True
                             except TypeError:
                                 logging.error("Could not hide video panel!")
@@ -754,8 +754,8 @@ def join(meet_id, meet_pw, duration, description):
                     TIME_FORMAT) + "-" + description) + "_minimize_error.png")
 
     # Move mouse from screen
-    pyautogui.moveTo(0, 0)
-    pyautogui.click(0, 0)
+    pyautogui.moveTo(0, 100)
+    pyautogui.click(0, 100)
 
     if DEBUG and ffmpeg_debug is not None:
         os.killpg(os.getpgid(ffmpeg_debug.pid), signal.SIGQUIT)
