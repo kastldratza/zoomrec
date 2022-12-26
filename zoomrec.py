@@ -242,6 +242,7 @@ def check_connecting(zoom_pid, start_date, duration):
 def join_meeting_id(meet_id):
     logging.info("Join a meeting by ID..")
     found_join_meeting = False
+    found_join_meeting_with_login = False
     try:
         x, y = pyautogui.locateCenterOnScreen(os.path.join(
             IMG_PATH, 'join_meeting.png'), minSearchTime=2, confidence=0.9)
@@ -251,6 +252,15 @@ def join_meeting_id(meet_id):
         pass
 
     if not found_join_meeting:
+        try:
+            x, y = pyautogui.locateCenterOnScreen(os.path.join(
+                IMG_PATH, 'join_meeting_with_login.png'), minSearchTime=2, confidence=0.9)
+            pyautogui.click(x, y)
+            found_join_meeting = True
+        except TypeError:
+            pass
+
+    if not found_join_meeting_with_login:
         logging.error("Could not find 'Join Meeting' on screen!")
         return False
 
