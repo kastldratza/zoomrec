@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:23.04
 
 ENV HOME=/home/zoomrec \
     TZ=Europe/Berlin \
