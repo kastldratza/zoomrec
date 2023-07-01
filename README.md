@@ -130,7 +130,6 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
-  --security-opt seccomp:unconfined \
 kastldratza/zoomrec:latest
 ```
 
@@ -147,7 +146,6 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
-  --security-opt seccomp:unconfined \
 kastldratza/zoomrec:latest
 ```
 #### Set Telegram details
@@ -159,7 +157,6 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
-  --security-opt seccomp:unconfined \
 kastldratza/zoomrec:latest
 ```
 #### Set Zoom display name 
@@ -170,7 +167,6 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
-  --security-opt seccomp:unconfined \
 kastldratza/zoomrec:latest
 ```
 ### Windows / _cmd_
@@ -181,7 +177,6 @@ docker run -d --restart unless-stopped \
   -v %cd%\example\audio:/home/zoomrec/audio \
   -v %cd%\example\meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
-  --security-opt seccomp:unconfined \
 kastldratza/zoomrec:latest
 ```
 
@@ -193,7 +188,6 @@ docker run -d --restart unless-stopped `
   -v ${PWD}/example/audio:/home/zoomrec/audio `
   -v ${PWD}/example/meetings.csv:/home/zoomrec/meetings.csv:ro `
   -p 5901:5901 `
-  --security-opt seccomp:unconfined `
 kastldratza/zoomrec:latest
 ```
 
@@ -205,7 +199,6 @@ docker run -d --restart unless-stopped \
   -v $(pwd)/example/audio:/home/zoomrec/audio \
   -v $(pwd)/example/meetings.csv:/home/zoomrec/meetings.csv:ro \
   -p 5901:5901 \
-  --security-opt seccomp:unconfined \
 kastldratza/zoomrec:latest
 ```
 
@@ -222,13 +215,13 @@ docker build -t kastldratza/zoomrec-custom:latest .
 
 # Run image without mounting meetings.csv and audio directory
 # Linux
-docker run -d --restart unless-stopped -v $(pwd)/recordings:/home/zoomrec/recordings -p 5901:5901 --security-opt seccomp:unconfined kastldratza/zoomrec-custom:latest
+docker run -d --restart unless-stopped -v $(pwd)/recordings:/home/zoomrec/recordings -p 5901:5901 kastldratza/zoomrec-custom:latest
 
 # Windows / PowerShell
-docker run -d --restart unless-stopped -v ${PWD}/recordings:/home/zoomrec/recordings -p 5901:5901 --security-opt seccomp:unconfined kastldratza/zoomrec-custom:latest
+docker run -d --restart unless-stopped -v ${PWD}/recordings:/home/zoomrec/recordings -p 5901:5901 kastldratza/zoomrec-custom:latest
 
 # Windows / cmd
-docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordings -p 5901:5901 --security-opt seccomp:unconfined kastldratza/zoomrec-custom:latest
+docker run -d --restart unless-stopped -v %cd%\recordings:/home/zoomrec/recordings -p 5901:5901 kastldratza/zoomrec-custom:latest
 ```
 
 ---

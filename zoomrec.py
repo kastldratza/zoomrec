@@ -446,12 +446,12 @@ def join(meet_id, meet_pw, duration, description):
 
     if not join_by_url:
         # Start Zoom
-        zoom = subprocess.Popen("zoom", stdout=subprocess.PIPE,
+        zoom = subprocess.Popen(("zoom", "--no-sandbox"), stdout=subprocess.PIPE,
                                 shell=True, preexec_fn=os.setsid)
         img_name = 'join_meeting.png'
     else:
         logging.info("Starting zoom with url")
-        zoom = subprocess.Popen(f'zoom --url="{meet_id}"', stdout=subprocess.PIPE,
+        zoom = subprocess.Popen(("zoom", "--no-sandbox", f'--url="{meet_id}"'), stdout=subprocess.PIPE,
                                 shell=True, preexec_fn=os.setsid)
         img_name = 'join.png'
     
