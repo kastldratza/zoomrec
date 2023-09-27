@@ -3,5 +3,5 @@ pyautogui
 schedule
 psutil
 opencv-python
-pillow>=8.1.0
+pillow>=10.0.1
 requests
