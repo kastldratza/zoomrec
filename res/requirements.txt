@@ -5,3 +5,4 @@ psutil
 opencv-python
 pillow>=8.1.0
 requests
+setuptools>=70.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
